@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	implementation 'com.github.taucher2003:t2003-logger-impl:1.0.1'
+	implementation 'com.github.taucher2003:t2003-logger-binder:1.0.1'
+	implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+	
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation "org.mockito:mockito-core:4.8.0"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+mainClassName = 'everyos.ggd.server.server.GGDServer'
