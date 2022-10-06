@@ -120,6 +120,16 @@ public class VanillaMatch implements Match {
 				player.onMessageFromServer(message);
 			}
 		}
+
+		@Override
+		public void rebroadcast(Message message, int broadcasterId) {
+			for (Player player: players) {
+				if (player.getId() == broadcasterId) {
+					continue;
+				}
+				player.onMessageFromServer(message);
+			}
+		}
 		
 	}
 	

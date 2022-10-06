@@ -1,9 +1,14 @@
 package everyos.ggd.server.game.vanilla.state;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.PlayerStats;
 import everyos.ggd.server.game.vanilla.util.ScoreUtil;
+import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.PlayerStatsImp;
 
@@ -11,6 +16,7 @@ public class PlayGameState implements GameState {
 	
 	private static final int GAME_LENGTH_SECONDS = 180;
 	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final MatchContext matchContext;
 	private final PlayerStats[] playerStats;
 	
@@ -32,9 +38,12 @@ public class PlayGameState implements GameState {
 	public void ping() {
 		if (getSecondsRemaining() == 0) {
 			matchContext.setGameState(new MatchFinishedGameState(matchContext, playerStats));
+			return;
 		}
+		
+		processPlayerMessages();
 	}
-	
+
 	private void initPlayerStats() {
 		for (int i = 0; i < playerStats.length; i++) {
 			playerStats[i] = new PlayerStatsImp();
@@ -50,6 +59,29 @@ public class PlayGameState implements GameState {
 	
 	private int getSecondsRemaining() {
 		return GAME_LENGTH_SECONDS - (int) ((System.currentTimeMillis() - timerStarted)/1000);
+	}
+	
+	private void processPlayerMessages() {
+		Player[] players = matchContext.getPlayers();
+		for (Player player: players) {
+			for (Message message: player.getQueuedMessagesFromClient()) {
+				processPlayerMessage(player, message);
+			}
+		}
+	}
+
+	private void processPlayerMessage(Player player, Message message) {
+		switch (message.getType()) {
+		case Message.ENTITY_TELEPORT:
+			processEntityTeleportMessage(message, player.getId());
+			break;
+		default:
+			logger.warn("Did not process message [type=" + message.getType() + "]");
+		}
+	}
+
+	private void processEntityTeleportMessage(Message message, int playerId) {
+		matchContext.rebroadcast(message, playerId);
 	}
 
 }

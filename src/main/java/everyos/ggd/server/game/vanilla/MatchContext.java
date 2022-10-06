@@ -14,5 +14,7 @@ public interface MatchContext {
 	int getMatchId();
 
 	void broadcast(Message message);
+	
+	void rebroadcast(Message message, int broadcasterId);
 
 }

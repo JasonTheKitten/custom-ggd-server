@@ -1,5 +1,6 @@
 package everyos.ggd.server.game.vanilla.state;
 
+import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
@@ -34,6 +35,7 @@ public class CountdownGameState implements GameState {
 		secondsElapsed -= 2;
 		
 		if (secondsElapsed >= 10) {
+			clearPlayerMessageQueue();
 			matchContext.setGameState(new PlayGameState(matchContext));
 		} else if (secondsElapsed >= 5) {
 			setCountdownTimer(10 - secondsElapsed);
@@ -46,6 +48,12 @@ public class CountdownGameState implements GameState {
 	
 	private void setCountdownTimer(int seconds) {
 		matchContext.broadcast(new CountdownMessageImp(seconds));
+	}
+	
+	private void clearPlayerMessageQueue() {
+		for (Player player: matchContext.getPlayers()) {
+			player.getQueuedMessagesFromClient();
+		}
 	}
 
 }
