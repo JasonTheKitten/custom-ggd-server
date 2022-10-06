@@ -12,6 +12,7 @@ public class SocketArrayImp implements SocketArray {
 	
 	private static final byte INT_LENGTH = 0;
 	private static final byte FIXED_LENGTH = 2;
+	private static final byte FLOAT_LENGTH = 5;
 
 	private final Map<Integer, Object> cache = new HashMap<>();
 	private final Map<Integer, RawEntry> rawEntries = new HashMap<>();
@@ -51,6 +52,12 @@ public class SocketArrayImp implements SocketArray {
 	}
 	
 	@Override
+	public void set(int index, float value) {
+		cache.put(index, value);
+		createRawEntry(index, encoder.encodeFloat(value), FLOAT_LENGTH);
+	}
+	
+	@Override
 	public void set(int index, SocketArray value) {
 		cache.put(index, value);
 		createRawEntry(index, encoder.encodeArray(value), FIXED_LENGTH);
@@ -79,6 +86,12 @@ public class SocketArrayImp implements SocketArray {
 		return getElement(index,
 			info -> decoder.decodeBoolean(info.bytes(), info.offset()));
 	};
+	
+	@Override
+	public Float getFloat(int index) {
+		return getElement(index,
+			info -> decoder.decodeFloat(info.bytes(), info.offset()));
+	}
 	
 	@Override
 	public SocketArray getArray(int index) {

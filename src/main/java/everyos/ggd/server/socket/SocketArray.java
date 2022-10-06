@@ -10,6 +10,8 @@ public interface SocketArray {
 	
 	void set(int index, boolean value);
 	
+	void set(int index, float value);
+	
 	void set(int index, SocketArray value);
 
 	void setRaw(int index, RawEntry entry);
@@ -19,6 +21,8 @@ public interface SocketArray {
 	String getString(int i);
 
 	boolean getBoolean(int i);
+	
+	Float getFloat(int i);
 
 	SocketArray getArray(int i);
 	

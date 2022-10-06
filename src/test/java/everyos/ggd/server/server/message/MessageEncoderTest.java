@@ -133,6 +133,8 @@ public class MessageEncoderTest {
 	private PlayerStateUpdate createSamplePlayerStateUpdate() {
 		return new PlayerStateUpdateBuilder()
 			.setEntityId(5)
+			.setConnected(true)
+			.setSpeed(1.1f)
 			.build();
 	}
 	
@@ -141,7 +143,8 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(encoded.getInt(1), 1);
 		
 		SocketArray updateData = encoded.getArray(2);
-		Assertions.assertNotNull(updateData);
+		Assertions.assertEquals(true, updateData.getBoolean(7));
+		Assertions.assertEquals(1.1f, updateData.getFloat(1));
 	}
 	
 }

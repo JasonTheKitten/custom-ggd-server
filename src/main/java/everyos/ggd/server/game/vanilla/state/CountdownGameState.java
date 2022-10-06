@@ -38,6 +38,11 @@ public class CountdownGameState implements GameState {
 		}
 		previousSecondsElapsed = secondsElapsed;
 		
+		if (secondsElapsed < 2) {
+			return;
+		}
+		secondsElapsed -= 2;
+		
 		if (secondsElapsed >= 10) {
 			matchContext.setGameState(new PlayGameState(matchContext));
 		} else if (secondsElapsed >= 5) {

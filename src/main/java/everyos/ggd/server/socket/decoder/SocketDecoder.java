@@ -9,6 +9,8 @@ public interface SocketDecoder {
 	String decodeString(byte[] bs, int offset, int length);
 
 	boolean decodeBoolean(byte[] bs, int offset);
+	
+	float decodeFloat(byte[] bs, int offset);
 
 	SocketArray decodeArray(byte[] bs, int offset, int length);
 

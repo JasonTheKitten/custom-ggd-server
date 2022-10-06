@@ -2,7 +2,7 @@ package everyos.ggd.server.message;
 
 public interface PlayerStateUpdate extends EntityStateUpdate {
 
-	int getSpeed();
+	float getSpeed();
 	
 	int getGlowRadius();
 	
@@ -18,6 +18,7 @@ public interface PlayerStateUpdate extends EntityStateUpdate {
 	
 	public static enum Animation {
 		NONE,
+		UNKNOWN,
 		SPIRITS_COLLECTED,
 		BUDDY_BONUS,
 		MEGA_FLAME

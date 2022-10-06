@@ -1,6 +1,7 @@
 package everyos.ggd.server.socket.encoder.imp;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import everyos.ggd.server.socket.SocketArray;
@@ -25,6 +26,15 @@ public class SocketEncoderImp implements SocketEncoder {
 	@Override
 	public byte[] encodeBoolean(boolean b) {
 		return encodeNumber(b ? 1: 0);
+	}
+	
+	@Override
+	public byte[] encodeFloat(float f) {
+		int intermediate = Integer.reverseBytes(Float.floatToIntBits(f));
+		return ByteBuffer
+			.allocate(4)
+			.putInt(intermediate)
+			.array();
 	}
 	
 	@Override

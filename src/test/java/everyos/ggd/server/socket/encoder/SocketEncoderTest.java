@@ -51,6 +51,13 @@ public class SocketEncoderTest {
 	}
 	
 	@Test
+	@DisplayName("Can encode float")
+	public void canEncodeFloat() {
+		byte[] encoded = encoder.encodeFloat(1.1f);
+		Assertions.assertArrayEquals(new byte[] { -51, -52, -116, 63 }, encoded);
+	}
+	
+	@Test
 	@DisplayName("Can encode empty array")
 	public void canEncodeEmptyArray() {
 		SocketArray array = new SocketArrayImp(null, encoder);
@@ -92,6 +99,19 @@ public class SocketEncoderTest {
 		Assertions.assertArrayEquals(new byte[] {
 			1 << 3, 1,
 			2 << 3, 0
+		}, encoded);
+	}
+	
+	@Test
+	@DisplayName("Can encode array with float")
+	public void canEncodeArrayWithFloat() {
+		SocketArray array = new SocketArrayImp(null, encoder);
+		array.set(0, 1.1f);
+		array.set(1, 42);
+		byte[] encoded = encoder.encodeArray(array);
+		Assertions.assertArrayEquals(new byte[] {
+			(1 << 3) + 5, -51, -52, -116, 63,
+			2 << 3, 42
 		}, encoded);
 	}
 	

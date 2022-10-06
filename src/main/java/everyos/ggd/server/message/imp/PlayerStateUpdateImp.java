@@ -4,10 +4,14 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 
 public class PlayerStateUpdateImp implements PlayerStateUpdate {
 
-	private int entityId;
+	private final int entityId;
+	private final float speed;
+	private final boolean connected;
 
 	public PlayerStateUpdateImp(PlayerStateUpdateBuilder builder) {
 		this.entityId = builder.getEntityId();
+		this.speed = builder.getSpeed();
+		this.connected = builder.getConnected();
 	}
 	
 	@Override
@@ -21,9 +25,8 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	}
 	
 	@Override
-	public int getSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getSpeed() {
+		return this.speed;
 	}
 
 	@Override
@@ -40,8 +43,7 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 
 	@Override
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.connected;
 	}
 
 	@Override

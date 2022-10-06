@@ -174,6 +174,8 @@ public final class MessageEncoder {
 	
 	private static SocketArray encodePlayerStateUpdate(PlayerStateUpdate stateUpdate) {
 		SocketArray updateData = createSocketArray();
+		updateData.set(1, stateUpdate.getSpeed());
+		updateData.set(7, stateUpdate.isConnected());
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, stateUpdate.getEntityId() + 1);

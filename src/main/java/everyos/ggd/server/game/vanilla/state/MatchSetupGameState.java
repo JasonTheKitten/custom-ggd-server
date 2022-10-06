@@ -59,6 +59,8 @@ public class MatchSetupGameState implements GameState {
 	private Message createInitialPlayerStateUpdateMessage(int playerNumber, Player player) {
 		PlayerStateUpdate state = new PlayerStateUpdateBuilder()
 			.setEntityId(playerNumber)
+			.setSpeed(15f)
+			.setConnected(true)
 			.build();
 		
 		return new PlayerInitMessageImp(

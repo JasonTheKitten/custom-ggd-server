@@ -10,6 +10,8 @@ public interface SocketEncoder {
 	
 	byte[] encodeBoolean(boolean b);
 	
+	byte[] encodeFloat(float f);
+	
 	byte[] encodeArray(SocketArray array);
 
 }

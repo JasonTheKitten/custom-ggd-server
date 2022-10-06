@@ -12,6 +12,8 @@ import everyos.ggd.server.server.message.MessageUtil;
 public class MatchMakerSocketState implements SocketState {
 	
 	private final MatchMaker matchMaker;
+	
+	static boolean b = false;
 
 	public MatchMakerSocketState(MatchMaker matchMaker) {
 		this.matchMaker = matchMaker;
@@ -37,7 +39,10 @@ public class MatchMakerSocketState implements SocketState {
 		sendMatchURL(sessionData, out);
 		
 		//TODO: Start at proper time
-		matchMaker.fulfillCurrentMatch();
+		if (b) {
+			matchMaker.fulfillCurrentMatch();
+		}
+		b=!b;
 	}
 
 	private void sendMatchURL(SessionData sessionData, Consumer<Event> out) {

@@ -1,5 +1,7 @@
 package everyos.ggd.server.socket.decoder.imp;
 
+import java.nio.ByteBuffer;
+
 import everyos.ggd.server.socket.SocketArray;
 import everyos.ggd.server.socket.SocketArray.RawEntry;
 import everyos.ggd.server.socket.decoder.SocketDecoder;
@@ -30,6 +32,14 @@ public class SocketDecoderImp implements SocketDecoder {
 	public boolean decodeBoolean(byte[] bs, int offset) {
 		return bs[offset] > 0;
 	}
+	
+	@Override
+	public float decodeFloat(byte[] bs, int offset) {
+		int intermediate = ByteBuffer
+			.wrap(bs, offset, 4)
+			.getInt();
+		return Float.intBitsToFloat(Integer.reverseBytes(intermediate));
+	}
 
 	@Override
 	public SocketArray decodeArray(byte[] bs, int offset, int length) {
@@ -49,9 +59,11 @@ public class SocketDecoderImp implements SocketDecoder {
 	}
 
 	private RawEntry getEntryAtIndex(byte[] bs, int offset, int indexInfo) {
-		if ((indexInfo & 3) == 0) {
+		if ((indexInfo & 7) == 0) {
 			int length = getNumberLength(bs, offset);
 			return new RawEntry(bs, offset, length, 0);
+		} else if ((indexInfo & 7) == 5) {
+			return new RawEntry(bs, offset, 4, 5);
 		} else {
 			int length = decodeNumber(bs, offset);
 			offset += getNumberLength(bs, offset);

@@ -49,6 +49,14 @@ public class SocketDecoderTest {
 	}
 	
 	@Test
+	@DisplayName("Can decode float")
+	public void canDecodeFloat() {
+		float decodedFloat = decoder.decodeFloat(new byte[] { -51, -52, -116, 63 }, 0);
+		
+		Assertions.assertEquals(1.1f, decodedFloat);
+	}
+	
+	@Test
 	@DisplayName("Can decode empty array")
 	public void canDecodeEmptyArray() {
 		SocketArray array = decoder.decodeArray(new byte[] {}, 0, 0);
@@ -99,6 +107,18 @@ public class SocketDecoderTest {
 		Assertions.assertArrayEquals(new int[] { 0, 1 }, array.keys());
 		Assertions.assertEquals(true, array.getBoolean(0));
 		Assertions.assertEquals(false, array.getBoolean(1));
+	}
+	
+	@Test
+	@DisplayName("Can decode array with float")
+	public void canDecodeArrayWithFloat() {
+		SocketArray array = decoder.decodeArray(new byte[] {
+			(1 << 3) + 5, -51, -52, -116, 63,
+			2 << 3, 42
+		}, 0, 7);
+		Assertions.assertArrayEquals(new int[] { 0, 1 }, array.keys());
+		Assertions.assertEquals(1.1f, array.getFloat(0));
+		Assertions.assertEquals(42, array.getInt(1));
 	}
 	
 	@Test
