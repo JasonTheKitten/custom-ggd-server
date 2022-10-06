@@ -2,7 +2,6 @@ package everyos.ggd.server.game.vanilla.state;
 
 import java.util.List;
 
-import everyos.ggd.server.common.imp.PositionImp;
 import everyos.ggd.server.event.Event;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
@@ -13,6 +12,7 @@ import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
+import everyos.ggd.server.physics.imp.PositionImp;
 
 public class MatchSetupGameState implements GameState {
 	

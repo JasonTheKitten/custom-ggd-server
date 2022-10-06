@@ -1,6 +1,8 @@
 package everyos.ggd.server.socket.imp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -14,23 +16,47 @@ public class SocketArrayImp implements SocketArray {
 	private static final byte FIXED_LENGTH = 2;
 	private static final byte FLOAT_LENGTH = 5;
 
-	private final Map<Integer, Object> cache = new HashMap<>();
-	private final Map<Integer, RawEntry> rawEntries = new HashMap<>();
+	private final List<Map<Integer, RawEntry>> overloads = new ArrayList<>();
 	private final SocketDecoder decoder;
 	private final SocketEncoder encoder;
+	
+	private Map<Integer, Object> cache;
+	private Map<Integer, RawEntry> rawEntries;
 
 	public SocketArrayImp(SocketDecoder decoder, SocketEncoder encoder) {
 		this.decoder = decoder;
 		this.encoder = encoder;
+		overload(0);
+	}
+	
+	@Override
+	public SocketArray overload(int level) {
+		if (level == overloads.size()) {
+			overloads.add(new HashMap<>());
+		}
+		Map<Integer, RawEntry> newRawEntries = overloads.get(level);
+		if (rawEntries != newRawEntries) {
+			cache = new HashMap<>();
+			rawEntries = newRawEntries;
+		}
+		
+		return this;
+	}
+	
+	@Override
+	public boolean hasOverload(int level) {
+		return overloads.size() > level;
 	}
 
 	@Override
 	public int[] keys() {
-		return rawEntries
+		int[] keys = rawEntries
 			.keySet()
 			.stream()
 			.mapToInt(Integer::intValue)
 			.toArray();
+		overload(0);
+		return keys;
 	}
 	
 	@Override
@@ -67,6 +93,7 @@ public class SocketArrayImp implements SocketArray {
 	public void setRaw(int index, RawEntry entry) {
 		rawEntries.put(index, entry);
 		cache.remove(index);
+		overload(0);
 	}
 	
 	@Override
@@ -101,7 +128,9 @@ public class SocketArrayImp implements SocketArray {
 	
 	@Override
 	public RawEntry getRaw(int index) {
-		return rawEntries.get(index);
+		RawEntry entry = rawEntries.get(index);
+		overload(0);
+		return entry;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -111,6 +140,7 @@ public class SocketArrayImp implements SocketArray {
 			if (info == null) {
 				return null; 
 			}
+			overload(0);
 			return converter.apply(info);
 		});
 	}
@@ -118,6 +148,7 @@ public class SocketArrayImp implements SocketArray {
 	private void createRawEntry(int index, byte[] bytes, byte type) {
 		RawEntry entry = new RawEntry(bytes, 0, bytes.length, type);
 		rawEntries.put(index, entry);
+		overload(0);
 	}
 
 }

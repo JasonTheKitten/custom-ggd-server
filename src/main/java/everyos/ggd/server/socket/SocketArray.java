@@ -1,6 +1,10 @@
 package everyos.ggd.server.socket;
 
 public interface SocketArray {
+	
+	SocketArray overload(int level);
+	
+	boolean hasOverload(int level);
 
 	int[] keys();
 	

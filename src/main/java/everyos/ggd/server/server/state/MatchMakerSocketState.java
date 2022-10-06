@@ -2,12 +2,12 @@ package everyos.ggd.server.server.state;
 
 import java.util.function.Consumer;
 
-import everyos.ggd.server.common.SessionData;
 import everyos.ggd.server.event.Event;
 import everyos.ggd.server.event.imp.InitialStatePushEventImp;
 import everyos.ggd.server.matchmaker.MatchMaker;
 import everyos.ggd.server.message.imp.ServerConnectMessageImp;
 import everyos.ggd.server.server.message.MessageUtil;
+import everyos.ggd.server.session.SessionData;
 
 public class MatchMakerSocketState implements SocketState {
 	

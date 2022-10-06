@@ -1,6 +1,6 @@
 package everyos.ggd.server.message;
 
-import everyos.ggd.server.common.Position;
+import everyos.ggd.server.physics.Position;
 
 public interface PlayerInitMessage extends Message {
 

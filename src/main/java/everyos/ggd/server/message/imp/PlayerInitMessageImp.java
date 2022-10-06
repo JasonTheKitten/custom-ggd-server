@@ -1,9 +1,9 @@
 package everyos.ggd.server.message.imp;
 
-import everyos.ggd.server.common.Position;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
+import everyos.ggd.server.physics.Position;
 
 public class PlayerInitMessageImp implements PlayerInitMessage {
 

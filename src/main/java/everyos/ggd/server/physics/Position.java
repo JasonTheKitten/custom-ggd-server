@@ -1,4 +1,4 @@
-package everyos.ggd.server.common;
+package everyos.ggd.server.physics;
 
 public interface Position {
 

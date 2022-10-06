@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import everyos.ggd.server.common.SessionData;
-import everyos.ggd.server.common.SessionManager;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
+import everyos.ggd.server.session.SessionData;
+import everyos.ggd.server.session.SessionManager;
 
 public class MatchMakerTest {
 	

@@ -44,9 +44,9 @@ public class MatchSocketState implements SocketState {
 	}
 
 	private void sendQueuedMessages(Consumer<Event> out) {
-		Message[] messages = new Message[] { queuedMessages.remove(0) };//queuedMessages.toArray(new Message[queuedMessages.size()]);
+		Message[] messages = queuedMessages.toArray(new Message[queuedMessages.size()]);
 		out.accept(new MessageEventImp(messages));
-		//queuedMessages.clear();
+		queuedMessages.clear();
 	}
 	
 	private void sendInitialStatePush(int matchId, String authKey, Consumer<Event> out) {

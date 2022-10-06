@@ -135,4 +135,18 @@ public class SocketEncoderTest {
 		}, encoded);
 	}
 	
+	@Test
+	@DisplayName("Can encode array with overloads")
+	public void canEncodeArrayWithOverloads() {
+		SocketArray array = new SocketArrayImp(null, encoder);
+		array.set(0, 4);
+		array.overload(1).set(0, 2);
+		
+		byte[] encoded = encoder.encodeArray(array);
+		Assertions.assertArrayEquals(new byte[] {
+			1 << 3, 4,
+			1 << 3, 2
+		}, encoded);
+	}
+	
 }

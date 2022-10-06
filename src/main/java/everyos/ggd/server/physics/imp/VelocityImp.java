@@ -1,13 +1,13 @@
-package everyos.ggd.server.common.imp;
+package everyos.ggd.server.physics.imp;
 
-import everyos.ggd.server.common.Position;
+import everyos.ggd.server.physics.Velocity;
 
-public class PositionImp implements Position {
+public class VelocityImp implements Velocity {
 	
 	private final float x;
 	private final float y;
 
-	public PositionImp(float x, float y) {
+	public VelocityImp(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}

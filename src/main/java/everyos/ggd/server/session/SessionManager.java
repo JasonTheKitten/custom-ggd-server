@@ -1,4 +1,4 @@
-package everyos.ggd.server.common;
+package everyos.ggd.server.session;
 
 import java.util.HashMap;
 import java.util.Map;

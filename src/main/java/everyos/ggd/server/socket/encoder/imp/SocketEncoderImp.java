@@ -40,13 +40,19 @@ public class SocketEncoderImp implements SocketEncoder {
 	@Override
 	public byte[] encodeArray(SocketArray array) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		for (int key: array.keys()) {
-			RawEntry entry = array.getRaw(key);
-			pushInt(outputStream, encodeIndex(key, entry.type()));
-			pushRawEntry(outputStream, entry);
+		for (int i = 0; array.hasOverload(i); i++) {
+			pushArrayOverload(outputStream, array, i);
 		}
 		
 		return outputStream.toByteArray();
+	}
+
+	private void pushArrayOverload(ByteArrayOutputStream outputStream, SocketArray array, int i) {
+		for (int key: array.overload(i).keys()) {
+			RawEntry entry = array.overload(i).getRaw(key);
+			pushInt(outputStream, encodeIndex(key, entry.type()));
+			pushRawEntry(outputStream, entry);
+		}
 	}
 
 	private int encodeIndex(int i, int type) {

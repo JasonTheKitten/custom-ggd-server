@@ -14,17 +14,21 @@ import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import everyos.ggd.server.common.SessionData;
-import everyos.ggd.server.common.SessionManager;
 import everyos.ggd.server.event.Event;
 import everyos.ggd.server.game.HumanPlayer;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.matchmaker.MatchMaker;
 import everyos.ggd.server.server.event.EventDecoder;
 import everyos.ggd.server.server.event.EventEncoder;
+import everyos.ggd.server.server.event.imp.EventDecoderImp;
+import everyos.ggd.server.server.event.imp.EventEncoderImp;
+import everyos.ggd.server.server.message.MessageEncoder;
+import everyos.ggd.server.server.message.imp.MessageEncoderImp;
 import everyos.ggd.server.server.state.MatchMakerSocketState;
 import everyos.ggd.server.server.state.MatchSocketState;
 import everyos.ggd.server.server.state.SocketState;
+import everyos.ggd.server.session.SessionData;
+import everyos.ggd.server.session.SessionManager;
 import everyos.ggd.server.socket.SocketArray;
 import everyos.ggd.server.socket.decoder.SocketDecoder;
 import everyos.ggd.server.socket.decoder.imp.SocketDecoderImp;
@@ -40,11 +44,13 @@ public class GGDServer extends WebSocketServer {
 	private final Map<WebSocket, SocketState> states = new HashMap<>();
 	private final SessionManager sessionManager = new SessionManager();
 	private final MatchMaker matchMaker = new MatchMaker(sessionManager);
+	private final EventEncoder eventEncoder = createEventEncoder();
+	private final EventDecoder eventDecoder = new EventDecoderImp();
 	
 	public GGDServer(int port) throws UnknownHostException {
 	    super(new InetSocketAddress(port));
 	}
-	
+
 	@Override
 	public void onStart() {
 		logger.info("Websocket has started! (Port: " + getPort() + ")");
@@ -88,6 +94,12 @@ public class GGDServer extends WebSocketServer {
 		logger.error("A websocket error has occured!", ex);
 	}
 	
+	private EventEncoder createEventEncoder() {
+		MessageEncoder messageEncoder = new MessageEncoderImp(encoder, decoder);
+		
+		return new EventEncoderImp(encoder, decoder, messageEncoder);
+	}
+	
 	private SocketState createMatchState(String message) {
 		SessionData session = SessionData.fromString(message);
 		Match match = sessionManager.getMatch(session.matchId());
@@ -103,11 +115,11 @@ public class GGDServer extends WebSocketServer {
 		byte[] packet = getPacket(packetBuffer);
 		SocketArray packetData = decoder.decodeArray(packet, 0, packet.length);
 		
-		return EventDecoder.decodeEvent(packetData);
+		return eventDecoder.decodeEvent(packetData);
 	}
 	
 	private byte[] encodeEvent(Event event) {
-		SocketArray packetData = EventEncoder.encodeEvent(event);
+		SocketArray packetData = eventEncoder.encodeEvent(event);
 		
 		return encoder.encodeArray(packetData);
 	}

@@ -1,4 +1,4 @@
-package everyos.ggd.server.common;
+package everyos.ggd.server.session;
 
 public record SessionData(int matchId, int playerId, String authenticationKey) {
 	
