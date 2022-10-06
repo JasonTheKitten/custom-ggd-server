@@ -12,10 +12,13 @@ import everyos.ggd.server.event.MessageEvent;
 import everyos.ggd.server.event.PingEvent;
 import everyos.ggd.server.event.PongEvent;
 import everyos.ggd.server.event.imp.MessageEventImp;
+import everyos.ggd.server.message.ClearSessionDataMessage;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.message.imp.ClearSessionDataMessageImp;
 import everyos.ggd.server.server.event.imp.EventDecoderImp;
 import everyos.ggd.server.server.event.imp.EventEncoderImp;
 import everyos.ggd.server.server.message.MessageEncoder;
+import everyos.ggd.server.server.message.imp.MessageDecoderImp;
 import everyos.ggd.server.server.message.imp.MessageEncoderImp;
 import everyos.ggd.server.socket.SocketArray;
 import everyos.ggd.server.socket.decoder.SocketDecoder;
@@ -29,7 +32,7 @@ public class EventDecoderTest {
 	
 	@BeforeEach
 	private void beforeEach() {
-		this.eventDecoder = new EventDecoderImp();
+		this.eventDecoder = new EventDecoderImp(new MessageDecoderImp());
 	}
 
 	@Test
@@ -73,6 +76,38 @@ public class EventDecoderTest {
 		MessageEvent event = (MessageEvent) eventDecoder.decodeEvent(array);
 		Assertions.assertEquals(Event.MESSAGE, event.code());
 		Assertions.assertArrayEquals(new Message[0], event.getMessages());
+	}
+	
+	@Test
+	@DisplayName("Can decode single message")
+	public void canDecodeSingleMessage() {
+		EventEncoder eventEncoder = createEventEncoder();
+		MessageEvent targetEvent = new MessageEventImp(new Message[] {
+			new ClearSessionDataMessageImp()
+		});
+		SocketArray array = eventEncoder.encodeEvent(targetEvent);
+		MessageEvent event = (MessageEvent) eventDecoder.decodeEvent(array);
+		Assertions.assertEquals(Event.MESSAGE, event.code());
+		Message[] messages = event.getMessages();
+		Assertions.assertEquals(1, messages.length);
+		Assertions.assertInstanceOf(ClearSessionDataMessage.class, messages[0]);
+	}
+	
+	@Test
+	@DisplayName("Can decode multiple messages")
+	public void canDecodeMultipleMessages() {
+		EventEncoder eventEncoder = createEventEncoder();
+		MessageEvent targetEvent = new MessageEventImp(new Message[] {
+			new ClearSessionDataMessageImp(),
+			new ClearSessionDataMessageImp()
+		});
+		SocketArray array = eventEncoder.encodeEvent(targetEvent);
+		MessageEvent event = (MessageEvent) eventDecoder.decodeEvent(array);
+		Assertions.assertEquals(Event.MESSAGE, event.code());
+		Message[] messages = event.getMessages();
+		Assertions.assertEquals(2, messages.length);
+		Assertions.assertInstanceOf(ClearSessionDataMessage.class, messages[0]);
+		Assertions.assertInstanceOf(ClearSessionDataMessage.class, messages[1]);
 	}
 
 	private EventEncoder createEventEncoder() {

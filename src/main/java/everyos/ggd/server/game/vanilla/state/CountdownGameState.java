@@ -1,12 +1,7 @@
 package everyos.ggd.server.game.vanilla.state;
 
-import java.util.List;
-
-import everyos.ggd.server.event.Event;
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
-import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
 
 public class CountdownGameState implements GameState {
@@ -23,11 +18,6 @@ public class CountdownGameState implements GameState {
 	@Override
 	public void start() {
 		this.startTime = System.currentTimeMillis();
-	}
-
-	@Override
-	public List<Message> handleEvent(Player player, Event event) {
-		return List.of();
 	}
 
 	@Override

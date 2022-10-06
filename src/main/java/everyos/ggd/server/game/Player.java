@@ -1,5 +1,7 @@
 package everyos.ggd.server.game;
 
+import java.util.List;
+
 import everyos.ggd.server.message.Message;
 
 public interface Player {
@@ -10,6 +12,8 @@ public interface Player {
 
 	boolean isBot();
 	
-	void onMessage(Message message);
+	void onMessageFromServer(Message message);
+	
+	List<Message> getQueuedMessagesFromClient();
 
 }

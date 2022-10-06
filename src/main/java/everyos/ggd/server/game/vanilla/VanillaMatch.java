@@ -1,10 +1,8 @@
 package everyos.ggd.server.game.vanilla;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import everyos.ggd.server.event.Event;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.MatchSetupGameState;
@@ -57,11 +55,6 @@ public class VanillaMatch implements Match {
 		startMatch();
 		
 		return false;
-	}
-
-	@Override
-	public List<Message> handleEvent(Player player, Event event) {
-		return gameState.handleEvent(player, event);
 	}
 	
 	private void startMatch() {
@@ -124,7 +117,7 @@ public class VanillaMatch implements Match {
 		@Override
 		public void broadcast(Message message) {
 			for (Player player: players) {
-				player.onMessage(message);
+				player.onMessageFromServer(message);
 			}
 		}
 		

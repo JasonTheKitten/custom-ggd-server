@@ -1,8 +1,5 @@
 package everyos.ggd.server.game.vanilla.state;
 
-import java.util.List;
-
-import everyos.ggd.server.event.Event;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
@@ -28,11 +25,6 @@ public class MatchSetupGameState implements GameState {
 	}
 
 	@Override
-	public List<Message> handleEvent(Player player, Event event) {
-		return List.of();
-	}
-
-	@Override
 	public void ping() {
 		Player[] players = matchContext.getPlayers();
 		if (players[players.length - 1] != null) {
@@ -46,9 +38,9 @@ public class MatchSetupGameState implements GameState {
 		Player[] players = matchContext.getPlayers();
 		for (int i = 0; i < players.length; i++) {
 			Player player = players[i];
-			player.onMessage(matchInitMessage);
+			player.onMessageFromServer(matchInitMessage);
 			matchContext.broadcast(createInitialPlayerStateUpdateMessage(i, player));
-			player.onMessage(createSessionDataSetMessage(i));
+			player.onMessageFromServer(createSessionDataSetMessage(i));
 		}
 	}
 

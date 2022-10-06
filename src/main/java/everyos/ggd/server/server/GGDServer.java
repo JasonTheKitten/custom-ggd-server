@@ -23,6 +23,7 @@ import everyos.ggd.server.server.event.EventEncoder;
 import everyos.ggd.server.server.event.imp.EventDecoderImp;
 import everyos.ggd.server.server.event.imp.EventEncoderImp;
 import everyos.ggd.server.server.message.MessageEncoder;
+import everyos.ggd.server.server.message.imp.MessageDecoderImp;
 import everyos.ggd.server.server.message.imp.MessageEncoderImp;
 import everyos.ggd.server.server.state.MatchMakerSocketState;
 import everyos.ggd.server.server.state.MatchSocketState;
@@ -39,13 +40,14 @@ public class GGDServer extends WebSocketServer {
 	
 	//TODO: Error handling
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final SocketDecoder decoder = new SocketDecoderImp();
-	private final SocketEncoder encoder = new SocketEncoderImp();
 	private final Map<WebSocket, SocketState> states = new HashMap<>();
 	private final SessionManager sessionManager = new SessionManager();
 	private final MatchMaker matchMaker = new MatchMaker(sessionManager);
+	
+	private final SocketDecoder decoder = new SocketDecoderImp();
+	private final SocketEncoder encoder = new SocketEncoderImp();
 	private final EventEncoder eventEncoder = createEventEncoder();
-	private final EventDecoder eventDecoder = new EventDecoderImp();
+	private final EventDecoder eventDecoder = new EventDecoderImp(new MessageDecoderImp());
 	
 	public GGDServer(int port) throws UnknownHostException {
 	    super(new InetSocketAddress(port));

@@ -1,14 +1,9 @@
 package everyos.ggd.server.game.vanilla.state;
 
-import java.util.List;
-
-import everyos.ggd.server.event.Event;
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.PlayerStats;
 import everyos.ggd.server.game.vanilla.util.ScoreUtil;
-import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.PlayerStatsImp;
 
@@ -31,11 +26,6 @@ public class PlayGameState implements GameState {
 	public void start() {
 		this.timerStarted = System.currentTimeMillis();
 		sendMatchUpdate();
-	}
-
-	@Override
-	public List<Message> handleEvent(Player player, Event event) {
-		return List.of();
 	}
 
 	@Override

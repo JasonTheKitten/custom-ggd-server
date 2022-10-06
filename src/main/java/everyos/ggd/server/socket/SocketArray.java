@@ -8,6 +8,8 @@ public interface SocketArray {
 
 	int[] keys();
 	
+	boolean hasKey(int index);
+	
 	void set(int index, int value);
 	
 	void set(int index, String value);

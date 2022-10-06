@@ -11,13 +11,15 @@ public class HumanPlayerImp implements HumanPlayer {
 	private final int playerId;
 	private final String authenticationKey;
 	private final boolean isBot;
-	private final List<Message> messageQueue;
+	private final List<Message> messageFromServerQueue;
+	private final List<Message> messageFromClientQueue;
 
 	public HumanPlayerImp(int playerId, String authenticationKey, boolean isBot) {
 		this.playerId = playerId;
 		this.authenticationKey = authenticationKey;
 		this.isBot = isBot;
-		this.messageQueue = new ArrayList<>();
+		this.messageFromServerQueue = new ArrayList<>();
+		this.messageFromClientQueue = new ArrayList<>();
 	}
 	
 	@Override
@@ -37,15 +39,28 @@ public class HumanPlayerImp implements HumanPlayer {
 
 	
 	@Override
-	public void onMessage(Message message) {
-		messageQueue.add(message);
+	public void onMessageFromServer(Message message) {
+		messageFromServerQueue.add(message);
 	}
 
 	//TODO: Re-send match info upon socket reconnect
 	@Override
-	public List<Message> getQueuedMessages() {
-		List<Message> messages = List.copyOf(messageQueue);
-		messageQueue.clear();
+	public List<Message> getQueuedMessagesFromServer() {
+		List<Message> messages = List.copyOf(messageFromServerQueue);
+		messageFromServerQueue.clear();
+		
+		return messages;
+	}
+
+	@Override
+	public void onMessageFromClient(Message message) {
+		messageFromClientQueue.add(message);
+	}
+	
+	@Override
+	public List<Message> getQueuedMessagesFromClient() {
+		List<Message> messages = List.copyOf(messageFromClientQueue);
+		messageFromClientQueue.clear();
 		
 		return messages;
 	}

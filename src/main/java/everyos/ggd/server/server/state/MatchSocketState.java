@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import everyos.ggd.server.event.Event;
+import everyos.ggd.server.event.MessageEvent;
 import everyos.ggd.server.event.imp.InitialStatePushEventImp;
 import everyos.ggd.server.event.imp.MessageEventImp;
 import everyos.ggd.server.game.HumanPlayer;
@@ -26,20 +27,28 @@ public class MatchSocketState implements SocketState {
 	public void handleEvent(Event event, Consumer<Event> out) {
 		switch (event.code()) {
 		case Event.AUTHENTICATE:
-			sendInitialStatePush(match.getId(), player.getAuthenticationKey(), out);
+			handleAuthenticateEvent(out);
 			break;
-		default:
-			List<Message> messages = match
-				.handleEvent(player, event);
-			queuedMessages.addAll(messages);
+		case Event.MESSAGE:
+			handleMessageEvent((MessageEvent) event);
 		}
 	}
 
 	@Override
 	public void ping(Consumer<Event> out) {
-		queuedMessages.addAll(player.getQueuedMessages());
+		queuedMessages.addAll(player.getQueuedMessagesFromServer());
 		if (queuedMessages.size() > 0) {
 			sendQueuedMessages(out);
+		}
+	}
+
+	private void handleAuthenticateEvent(Consumer<Event> out) {
+		sendInitialStatePush(match.getId(), player.getAuthenticationKey(), out);
+	}
+	
+	private void handleMessageEvent(MessageEvent event) {
+		for (Message message: event.getMessages()) {
+			player.onMessageFromClient(message);
 		}
 	}
 

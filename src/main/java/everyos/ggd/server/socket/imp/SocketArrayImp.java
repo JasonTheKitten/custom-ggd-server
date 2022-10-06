@@ -60,6 +60,14 @@ public class SocketArrayImp implements SocketArray {
 	}
 	
 	@Override
+	public boolean hasKey(int index) {
+		boolean hasKey = rawEntries.containsKey(index);
+		overload(0);
+		
+		return hasKey;
+	}
+	
+	@Override
 	public void set(int index, int value) {
 		cache.put(index, value);
 		createRawEntry(index, encoder.encodeNumber(value), INT_LENGTH);

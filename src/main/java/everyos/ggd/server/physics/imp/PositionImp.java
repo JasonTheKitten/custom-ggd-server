@@ -21,5 +21,7 @@ public class PositionImp implements Position {
 	public float getY() {
 		return this.y;
 	}
+	
+	//TODO: Implement equals and hashCode
 
 }

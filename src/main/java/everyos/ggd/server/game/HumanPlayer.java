@@ -6,6 +6,8 @@ import everyos.ggd.server.message.Message;
 
 public interface HumanPlayer extends Player {
 
-	List<Message> getQueuedMessages();
+	List<Message> getQueuedMessagesFromServer();
+	
+	void onMessageFromClient(Message message);
 	
 }

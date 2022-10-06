@@ -1,9 +1,9 @@
 plugins {
-    id 'application'
+	id 'application'
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
@@ -16,7 +16,7 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+	useJUnitPlatform()
 }
 
 mainClassName = 'everyos.ggd.server.server.GGDServer'
