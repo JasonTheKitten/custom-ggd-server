@@ -2,6 +2,7 @@ package everyos.ggd.server.server.message.imp;
 
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.imp.ClearSessionDataMessageImp;
+import everyos.ggd.server.message.imp.EntityMoveMessageImp;
 import everyos.ggd.server.message.imp.EntityTeleportMessageImp;
 import everyos.ggd.server.physics.Position;
 import everyos.ggd.server.physics.Velocity;
@@ -16,6 +17,8 @@ public class MessageDecoderImp implements MessageDecoder {
 	public Message decode(SocketArray encoded) {
 		int messageType = encoded.getInt(0);
 		switch (messageType) {
+		case Message.ENTITY_MOVE:
+			return decodeEntityMoveMessage(encoded);
 		case Message.ENTITY_TELEPORT:
 			return decodeEntityTeleportMessage(encoded);
 		case Message.CLEAR_SESSION_DATA:
@@ -27,6 +30,15 @@ public class MessageDecoderImp implements MessageDecoder {
 		}
 	}
 
+	private Message decodeEntityMoveMessage(SocketArray encoded) {
+		int playerId = encoded.getInt(1);
+		SocketArray moveData = encoded.getArray(11);
+		Position position = new PositionImp(moveData.getFloat(1), moveData.getFloat(2));
+		boolean isMoving = moveData.getBoolean(3);
+		
+		return new EntityMoveMessageImp(playerId, position, isMoving);
+	}
+	
 	private Message decodeEntityTeleportMessage(SocketArray encoded) {
 		int playerId = encoded.getInt(1);
 		SocketArray teleportData = encoded.getArray(13);
@@ -37,7 +49,7 @@ public class MessageDecoderImp implements MessageDecoder {
 		return new EntityTeleportMessageImp(playerId, position, velocity, isMoving);
 	}
 	
-	// The client shpuldn't ever send us this, but it makes testing easier
+	// The client shouldn't ever send us this, but it makes testing easier
 	private Message decodeClearSessionDataMessage() {
 		return new ClearSessionDataMessageImp();
 	}

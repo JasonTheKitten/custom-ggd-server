@@ -72,6 +72,9 @@ public class PlayGameState implements GameState {
 
 	private void processPlayerMessage(Player player, Message message) {
 		switch (message.getType()) {
+		case Message.ENTITY_MOVE:
+			processEntityMoveMessage(message, player.getId());
+			break;
 		case Message.ENTITY_TELEPORT:
 			processEntityTeleportMessage(message, player.getId());
 			break;
@@ -80,6 +83,10 @@ public class PlayGameState implements GameState {
 		}
 	}
 
+	private void processEntityMoveMessage(Message message, int playerId) {
+		matchContext.rebroadcast(message, playerId);
+	}
+	
 	private void processEntityTeleportMessage(Message message, int playerId) {
 		matchContext.rebroadcast(message, playerId);
 	}

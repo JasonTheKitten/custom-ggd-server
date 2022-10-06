@@ -1,6 +1,7 @@
 package everyos.ggd.server.server.message.imp;
 
 import everyos.ggd.server.message.CountdownMessage;
+import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.MatchFinishedMessage;
 import everyos.ggd.server.message.MatchInitMessage;
@@ -42,6 +43,8 @@ public class MessageEncoderImp implements MessageEncoder {
 			return encodePlayerInitMessage((PlayerInitMessage) message);
 		case Message.MATCH_UPDATE_OR_FINISH:
 			return encodeMatchStateUpdateOrFinishMessage(message);
+		case Message.ENTITY_MOVE:
+			return encodeEntityMoveMessage((EntityMoveMessage) message);
 		case Message.ENTITY_TELEPORT:
 			return encodeEntityTeleportMessage((EntityTeleportMessage) message);
 		case Message.CLEAR_SESSION_DATA:
@@ -166,6 +169,21 @@ public class MessageEncoderImp implements MessageEncoder {
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, Message.MATCH_UPDATE_OR_FINISH);
 		encoded.set(10, matchFinishedData);
+		
+		return encoded;
+	}
+	
+	private SocketArray encodeEntityMoveMessage(EntityMoveMessage message) {
+		SocketArray moveData = createSocketArray();
+		moveData.set(0, message.getEntityId());
+		moveData.set(1, message.getRelativePosition().getX());
+		moveData.set(2, message.getRelativePosition().getY());
+		moveData.set(3, message.isMoving());
+		
+		SocketArray encoded = createSocketArray();
+		encoded.set(0, Message.ENTITY_MOVE);
+		encoded.set(1, message.getEntityId());
+		encoded.set(11, moveData);
 		
 		return encoded;
 	}

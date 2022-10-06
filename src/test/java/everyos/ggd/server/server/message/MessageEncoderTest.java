@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import everyos.ggd.server.message.ClearSessionDataMessage;
 import everyos.ggd.server.message.CountdownMessage;
+import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.MatchFinishedMessage;
 import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward;
@@ -19,6 +20,7 @@ import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
 import everyos.ggd.server.message.imp.ClearSessionDataMessageImp;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
+import everyos.ggd.server.message.imp.EntityMoveMessageImp;
 import everyos.ggd.server.message.imp.EntityTeleportMessageImp;
 import everyos.ggd.server.message.imp.MatchFinishedMessageImp;
 import everyos.ggd.server.message.imp.MatchInitMessageImp;
@@ -138,6 +140,21 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(1, matchFinishedData.getInt(0));
 		Assertions.assertEquals(true, matchFinishedData.getBoolean(6));
 		Assertions.assertEquals(2, matchFinishedData.getInt(7));
+	}
+	
+	@Test
+	@DisplayName("Can encode entity move message")
+	public void canEncodeEntityMoveMessage() {
+		EntityMoveMessage message = new EntityMoveMessageImp(
+			1, new PositionImp(2f, 3f), true);
+		SocketArray encoded = messageEncoder.encode(message);
+		Assertions.assertEquals(Message.ENTITY_MOVE, encoded.getInt(0));
+		Assertions.assertEquals(1, encoded.getInt(1));
+		SocketArray moveData = encoded.getArray(11);
+		Assertions.assertEquals(1, moveData.getInt(0));
+		Assertions.assertEquals(2f, moveData.getFloat(1));
+		Assertions.assertEquals(3f, moveData.getFloat(2));
+		Assertions.assertEquals(true, moveData.getBoolean(3));
 	}
 	
 	@Test

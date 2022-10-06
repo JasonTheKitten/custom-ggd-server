@@ -93,7 +93,7 @@ public class GGDServer extends WebSocketServer {
 	
 	@Override
 	public void onError(WebSocket conn, Exception ex) {
-		logger.error("A websocket error has occured!", ex);
+		
 	}
 	
 	private EventEncoder createEventEncoder() {

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import everyos.ggd.server.message.ClearSessionDataMessage;
+import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.physics.Position;
@@ -29,6 +30,28 @@ public class MessageDecoderTest {
 		decoder = new SocketDecoderImp();
 		encoder = new SocketEncoderImp();
 		messageDecoder = new MessageDecoderImp();
+	}
+	
+	@Test
+	@DisplayName("Can decode entity move message")
+	public void canDecodeEntityMoveMessage() {
+		SocketArray moveData = createSocketArray();
+		moveData.set(0, 1);
+		moveData.set(1, 2f);
+		moveData.set(2, 3f);
+		moveData.set(3, true);
+		
+		SocketArray array = createSocketArray();
+		array.set(0, Message.ENTITY_MOVE);
+		array.set(1, 1);
+		array.set(11, moveData);
+		
+		EntityMoveMessage message = (EntityMoveMessage) messageDecoder.decode(array);
+		Assertions.assertEquals(1, message.getEntityId());
+		Assertions.assertEquals(true, message.isMoving());
+		Position position = message.getRelativePosition();
+		Assertions.assertEquals(2f, position.getX());
+		Assertions.assertEquals(3f, position.getY());
 	}
 	
 	@Test
