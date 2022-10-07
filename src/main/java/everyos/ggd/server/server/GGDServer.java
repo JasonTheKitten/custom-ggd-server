@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,6 +116,7 @@ public class GGDServer extends WebSocketServer {
 
 	private Event decodeEvent(ByteBuffer packetBuffer) {
 		byte[] packet = getPacket(packetBuffer);
+		logger.trace(HexFormat.of().formatHex(packet));
 		SocketArray packetData = decoder.decodeArray(packet, 0, packet.length);
 		
 		return eventDecoder.decodeEvent(packetData);

@@ -10,6 +10,8 @@ import everyos.ggd.server.message.Message;
 
 public class VanillaMatch implements Match {
 	
+	private static final int FRAME_DELAY = 16;
+	
 	private static final String[] AVAILABLE_MAPS = new String[] {
 		"map01", "map02", "map03", "map04"
 	};
@@ -84,7 +86,7 @@ public class VanillaMatch implements Match {
 				ping();
 			}
 			
-		}, 16, 16);
+		}, FRAME_DELAY, FRAME_DELAY);
 	}
 
 	private void ping() {

@@ -56,8 +56,11 @@ public class EventDecoderImp implements EventDecoder {
 		SocketArray messageData = array.getArray(1);
 		SocketArray messages = messageData.getArray(1);
 		for (int i = 0; messages.hasOverload(i) && messages.overload(i).hasKey(0); i++) {
-			Message decodedMessage = messageDecoder.decode(
-				messages.overload(i).getArray(0));
+			SocketArray messageArray = messages.overload(i).getArray(0);
+			if (!messageArray.hasKey(0)) {
+				continue;
+			}
+			Message decodedMessage = messageDecoder.decode(messageArray);
 			decodedMessages.add(decodedMessage);
 		}
 		

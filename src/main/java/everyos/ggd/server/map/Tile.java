@@ -2,8 +2,12 @@ package everyos.ggd.server.map;
 
 public interface Tile {
 
+	boolean greenCanPass();
+	
 	boolean purpleCanPass();
 	
-	boolean greenCanPass();
+	boolean hasSpiritFlame();
+	
+	boolean hasMegaFlame();
 	
 }

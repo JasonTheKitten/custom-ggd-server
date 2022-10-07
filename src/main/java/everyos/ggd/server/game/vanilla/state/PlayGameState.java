@@ -8,6 +8,8 @@ import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.PlayerStats;
 import everyos.ggd.server.game.vanilla.util.ScoreUtil;
+import everyos.ggd.server.message.EntityMoveMessage;
+import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.PlayerStatsImp;
@@ -73,21 +75,21 @@ public class PlayGameState implements GameState {
 	private void processPlayerMessage(Player player, Message message) {
 		switch (message.getType()) {
 		case Message.ENTITY_MOVE:
-			processEntityMoveMessage(message, player.getId());
+			processEntityMoveMessage((EntityMoveMessage) message, player.getId());
 			break;
 		case Message.ENTITY_TELEPORT:
-			processEntityTeleportMessage(message, player.getId());
+			processEntityTeleportMessage((EntityTeleportMessage) message, player.getId());
 			break;
 		default:
 			logger.warn("Did not process message [type=" + message.getType() + "]");
 		}
 	}
 
-	private void processEntityMoveMessage(Message message, int playerId) {
+	private void processEntityMoveMessage(EntityMoveMessage message, int playerId) {
 		matchContext.rebroadcast(message, playerId);
 	}
 	
-	private void processEntityTeleportMessage(Message message, int playerId) {
+	private void processEntityTeleportMessage(EntityTeleportMessage message, int playerId) {
 		matchContext.rebroadcast(message, playerId);
 	}
 
