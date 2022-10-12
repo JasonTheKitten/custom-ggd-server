@@ -11,6 +11,7 @@ import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
+import everyos.ggd.server.message.SpiritInitMessage;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.server.message.MessageEncoder;
 import everyos.ggd.server.socket.SocketArray;
@@ -39,8 +40,8 @@ public class MessageEncoderImp implements MessageEncoder {
 			return encodeMatchInitMessage((MatchInitMessage) message);
 		case Message.COUNTDOWN_TIMER:
 			return encodeCountdownMessage((CountdownMessage) message);
-		case Message.PLAYER_INIT:
-			return encodePlayerInitMessage((PlayerInitMessage) message);
+		case Message.ENTITY_INIT:
+			return encodePlayerOrSpiritUpdateMessage(message);
 		case Message.MATCH_UPDATE_OR_FINISH:
 			return encodeMatchStateUpdateOrFinishMessage(message);
 		case Message.ENTITY_MOVE:
@@ -105,6 +106,14 @@ public class MessageEncoderImp implements MessageEncoder {
 		return encoded;
 	}
 	
+	private SocketArray encodePlayerOrSpiritUpdateMessage(Message message) {
+		if (message instanceof PlayerInitMessage) {
+			return encodePlayerInitMessage((PlayerInitMessage) message);
+		} else {
+			return encodeSpiritInitMessage((SpiritInitMessage) message);
+		}
+	}
+
 	private SocketArray encodePlayerInitMessage(PlayerInitMessage message) {
 		PlayerStateUpdate state = message.getStateUpdate();
 		
@@ -125,7 +134,28 @@ public class MessageEncoderImp implements MessageEncoder {
 		initStruct.set(1, encodePlayerStateUpdate(message.getStateUpdate()));
 		
 		SocketArray encoded = createSocketArray();
-		encoded.set(0, Message.PLAYER_INIT);
+		encoded.set(0, Message.ENTITY_INIT);
+		encoded.set(8, initStruct);
+		
+		return encoded;
+	}
+	
+	private SocketArray encodeSpiritInitMessage(SpiritInitMessage message) {
+		SocketArray characterData = createSocketArray();
+		
+		SocketArray initData = createSocketArray();
+		initData.set(0, message.getEntityId() + 1);
+		initData.set(1, 16);
+		initData.set(2, message.getInitialPosition().getX());
+		initData.set(3, message.getInitialPosition().getY());
+		initData.set(5, characterData);
+		
+		SocketArray initStruct = createSocketArray();
+		initStruct.set(0, initData);
+		initStruct.set(1, encodeSpiritStateUpdate(message.getEntityId()));
+		
+		SocketArray encoded = createSocketArray();
+		encoded.set(0, Message.ENTITY_INIT);
 		encoded.set(8, initStruct);
 		
 		return encoded;
@@ -223,6 +253,17 @@ public class MessageEncoderImp implements MessageEncoder {
 		encoded.set(0, stateUpdate.getEntityId() + 1);
 		encoded.set(1, 1);
 		encoded.set(2, updateData);
+		
+		return encoded;
+	}
+	
+	private SocketArray encodeSpiritStateUpdate(int entityId) {
+		SocketArray updateData = createSocketArray();
+		
+		SocketArray encoded = createSocketArray();
+		encoded.set(0, entityId + 1);
+		encoded.set(1, 16);
+		encoded.set(3, updateData);
 		
 		return encoded;
 	}

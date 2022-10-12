@@ -11,6 +11,7 @@ import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
+import everyos.ggd.server.message.imp.SpiritInitMessageImp;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.Position;
 
@@ -31,9 +32,14 @@ public class MatchSetupGameState implements GameState {
 	public void ping() {
 		Player[] players = matchContext.getPlayers();
 		if (players[players.length - 1] != null) {
-			initPlayerState();
-			matchContext.setGameState(new CountdownGameState(matchContext));
+			setupMatch();
 		}
+	}
+
+	private void setupMatch() {
+		initPlayerState();
+		initSpiritState();
+		matchContext.setGameState(new CountdownGameState(matchContext));
 	}
 
 	private void initPlayerState() {
@@ -59,8 +65,8 @@ public class MatchSetupGameState implements GameState {
 			.build();
 		
 		return new PlayerInitMessageImp(
-			getPlayerStartPosition(matchContext.getMap(), playerNumber),
 			playerNumber,
+			getPlayerStartPosition(matchContext.getMap(), playerNumber),
 			player.isBot(),
 			state);
 	}
@@ -83,6 +89,15 @@ public class MatchSetupGameState implements GameState {
 		return playerIsGreen ?
 			MapUtil.getGreenBaseTileLocations(map) :
 			MapUtil.getPurpleBaseTileLocations(map);
+	}
+	
+	private void initSpiritState() {
+		int nextEntityId = 8;
+		MatchMap map = matchContext.getMap();
+		for (Location spiritLocation: MapUtil.getSpiritFlameTileLocations(map)) {
+			Position spiritPosition = MapUtil.locationToPosition(map, spiritLocation);
+			matchContext.broadcast(new SpiritInitMessageImp(nextEntityId++, spiritPosition));
+		}
 	}
 
 }

@@ -1,0 +1,53 @@
+[33mcommit 939c5106906ccd72648950cc4ec961c2214e76c3[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Wed Oct 12 15:49:04 2022 -0400
+
+    Players spawn at bases
+
+[33mcommit 63cfa013c09323659bf5e922d92139443629f109[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Thu Oct 6 22:05:28 2022 -0400
+
+    Work on maps
+
+[33mcommit b0acbe2ec47fb71ed4f937c2d2fcf3571eb803ce[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Thu Oct 6 15:32:55 2022 -0400
+
+    Rebroadcast movement event
+
+[33mcommit b63d5a51c25e229e8074204a60b77f26092fe26a[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Thu Oct 6 15:02:01 2022 -0400
+
+    Rebroadcast teleport events
+
+[33mcommit 431e7e85a93462fae5373804ae622cbdcbe935a9[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Thu Oct 6 14:39:38 2022 -0400
+
+    Continue work on messaging
+
+[33mcommit 53b4cde9dd8b985863dad48d414c6caff7f29574[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Thu Oct 6 00:17:05 2022 -0400
+
+    Create README
+
+[33mcommit 7d4e99ca89774581b8220a25d3926ec50cee2bc2[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Wed Oct 5 23:32:19 2022 -0400
+
+    Work on messages
+
+[33mcommit 2bea0a3bf6135189c1093d7156cf2418bf2b6c4c[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Wed Oct 5 21:05:08 2022 -0400
+
+    Let client move on client side
+
+[33mcommit b4f586eb127130fec1172865389e5e2fea17a3a3[m
+Author: jasonthekitten <jasontopia03@gmail.com>
+Date:   Tue Oct 4 22:42:08 2022 -0400
+
+    Add work so far

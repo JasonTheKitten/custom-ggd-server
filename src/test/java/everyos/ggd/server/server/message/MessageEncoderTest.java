@@ -18,6 +18,7 @@ import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
+import everyos.ggd.server.message.SpiritInitMessage;
 import everyos.ggd.server.message.imp.ClearSessionDataMessageImp;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
 import everyos.ggd.server.message.imp.EntityMoveMessageImp;
@@ -29,6 +30,7 @@ import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.ServerConnectMessageImp;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
+import everyos.ggd.server.message.imp.SpiritInitMessageImp;
 import everyos.ggd.server.physics.imp.PositionImp;
 import everyos.ggd.server.physics.imp.VelocityImp;
 import everyos.ggd.server.server.message.imp.MessageEncoderImp;
@@ -99,12 +101,12 @@ public class MessageEncoderTest {
 	public void canEncodeInitialPlayerStateMessage() {
 		PlayerStateUpdate stateUpdate = createSamplePlayerStateUpdate();
 		PlayerInitMessage message = new PlayerInitMessageImp(
-			new PositionImp(1f, 2f),
 			5,
+			new PositionImp(1f, 2f),
 			true,
 			stateUpdate);
 		SocketArray encoded = messageEncoder.encode(message);
-		Assertions.assertEquals(Message.PLAYER_INIT, encoded.getInt(0));
+		Assertions.assertEquals(Message.ENTITY_INIT, encoded.getInt(0));
 		SocketArray initStruct = encoded.getArray(8);
 		SocketArray initData = initStruct.getArray(0);
 		Assertions.assertEquals(6, initData.getInt(0));
@@ -116,6 +118,23 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(6, characterData.getInt(2));
 		Assertions.assertTrue(characterData.getBoolean(3));
 		assertCanEncodePlayerStateUpdate(initStruct.getArray(1));
+	}
+	
+	@Test
+	@DisplayName("Can encode initial spirit state message")
+	public void canEncodeInitialSpiritStateMessage() {
+		SpiritInitMessage message = new SpiritInitMessageImp(
+			8,
+			new PositionImp(1f, 2f));
+		SocketArray encoded = messageEncoder.encode(message);
+		Assertions.assertEquals(Message.ENTITY_INIT, encoded.getInt(0));
+		SocketArray initStruct = encoded.getArray(8);
+		SocketArray initData = initStruct.getArray(0);
+		Assertions.assertEquals(9, initData.getInt(0));
+		//TODO: Spirit Flame vs Mega Flame (vs pumpkin?)
+		Assertions.assertEquals(1f, initData.getFloat(2));
+		Assertions.assertEquals(2f, initData.getFloat(3));
+		assertCanEncodeSpiritStateUpdate(initStruct.getArray(1));
 	}
 	
 	@Test
@@ -201,6 +220,11 @@ public class MessageEncoderTest {
 		SocketArray updateData = encoded.getArray(2);
 		Assertions.assertTrue(updateData.getBoolean(7));
 		Assertions.assertEquals(1.1f, updateData.getFloat(1));
+	}
+	
+	private void assertCanEncodeSpiritStateUpdate(SocketArray encoded) {
+		Assertions.assertEquals(encoded.getInt(0), 9);
+		Assertions.assertEquals(encoded.getInt(1), 16);
 	}
 	
 }

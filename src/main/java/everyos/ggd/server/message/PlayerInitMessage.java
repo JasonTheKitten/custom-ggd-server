@@ -4,9 +4,9 @@ import everyos.ggd.server.physics.Position;
 
 public interface PlayerInitMessage extends Message {
 
-	Position getInitialPosition();
-	
 	int getCharacterId();
+	
+	Position getInitialPosition();
 	
 	boolean isBot();
 	

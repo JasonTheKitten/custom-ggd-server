@@ -7,31 +7,31 @@ import everyos.ggd.server.physics.Position;
 
 public class PlayerInitMessageImp implements PlayerInitMessage {
 
-	private final Position position;
 	private final int characterId;
+	private final Position position;
 	private final boolean isBot;
 	private final PlayerStateUpdate state;
 
-	public PlayerInitMessageImp(Position position, int characterId, boolean isBot, PlayerStateUpdate state) {
-		this.position = position;
+	public PlayerInitMessageImp(int characterId, Position position, boolean isBot, PlayerStateUpdate state) {
 		this.characterId = characterId;
+		this.position = position;
 		this.isBot = isBot;
 		this.state = state;
 	}
 	
 	@Override
 	public int getType() {
-		return Message.PLAYER_INIT;
+		return Message.ENTITY_INIT;
+	}
+	
+	@Override
+	public int getCharacterId() {
+		return this.characterId;
 	}
 	
 	@Override
 	public Position getInitialPosition() {
 		return this.position;
-	}
-
-	@Override
-	public int getCharacterId() {
-		return this.characterId;
 	}
 
 	@Override

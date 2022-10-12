@@ -23,6 +23,10 @@ public final class MapUtil {
 		return getFilteredTileLocations(map, MapUtil::isPurpleBaseTile);
 	}
 	
+	public static Location[] getSpiritFlameTileLocations(MatchMap map) {
+		return getFilteredTileLocations(map, MapUtil::isSpiritFlameTile);
+	}
+	
 	public static Position locationToPosition(MatchMap map, Location location) {
 		float xComponent = (location.getX() - map.getWidth() / 2f) * 2;
 		float yComponent = (location.getY() - map.getHeight() / 2f) * 2;
@@ -54,6 +58,10 @@ public final class MapUtil {
 		return
 			!tile.greenCanPass() &&
 			tile.purpleCanPass();
+	}
+	
+	private static boolean isSpiritFlameTile(Tile tile) {
+		return tile.hasSpiritFlame();
 	}
 	
 }
