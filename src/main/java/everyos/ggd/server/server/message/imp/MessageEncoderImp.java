@@ -116,6 +116,8 @@ public class MessageEncoderImp implements MessageEncoder {
 		SocketArray initData = createSocketArray();
 		initData.set(0, state.getEntityId() + 1);
 		initData.set(1, 1);
+		initData.set(2, message.getInitialPosition().getX());
+		initData.set(3, message.getInitialPosition().getY());
 		initData.set(5, characterData);
 		
 		SocketArray initStruct = createSocketArray();

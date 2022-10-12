@@ -2,7 +2,7 @@ package everyos.ggd.server.map;
 
 import everyos.ggd.server.map.imp.TileImp;
 
-public class ArrayMap implements Map {
+public class ArrayMap implements MatchMap {
 
 	private int[][] tiles;
 

@@ -12,7 +12,7 @@ public class ArrayMapTest {
 		new int[] { 4, 5 }
 	};
 	
-	private Map map = new ArrayMap(mapTiles);
+	private MatchMap map = new ArrayMap(mapTiles);
 	
 	@Test
 	@DisplayName("Wall tile is not passable")

@@ -99,7 +99,7 @@ public class MessageEncoderTest {
 	public void canEncodeInitialPlayerStateMessage() {
 		PlayerStateUpdate stateUpdate = createSamplePlayerStateUpdate();
 		PlayerInitMessage message = new PlayerInitMessageImp(
-			new PositionImp(0, 0),
+			new PositionImp(1f, 2f),
 			5,
 			true,
 			stateUpdate);
@@ -109,10 +109,12 @@ public class MessageEncoderTest {
 		SocketArray initData = initStruct.getArray(0);
 		Assertions.assertEquals(6, initData.getInt(0));
 		Assertions.assertEquals(1, initData.getInt(1));
+		Assertions.assertEquals(1f, initData.getFloat(2));
+		Assertions.assertEquals(2f, initData.getFloat(3));
 		SocketArray characterData = initData.getArray(5);
 		Assertions.assertEquals(2, characterData.getInt(1));
 		Assertions.assertEquals(6, characterData.getInt(2));
-		Assertions.assertEquals(true, characterData.getBoolean(3));
+		Assertions.assertTrue(characterData.getBoolean(3));
 		assertCanEncodePlayerStateUpdate(initStruct.getArray(1));
 	}
 	
@@ -124,7 +126,7 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(Message.MATCH_UPDATE_OR_FINISH, encoded.getInt(0));
 		SocketArray matchStateUpdateData = encoded.getArray(10);
 		Assertions.assertEquals(1, matchStateUpdateData.getInt(0));
-		Assertions.assertEquals(true, matchStateUpdateData.getBoolean(5));
+		Assertions.assertTrue(matchStateUpdateData.getBoolean(5));
 		Assertions.assertEquals(3, matchStateUpdateData.getInt(2));
 		Assertions.assertEquals(1, matchStateUpdateData.getInt(3));
 		Assertions.assertEquals(2, matchStateUpdateData.getInt(4));
@@ -138,7 +140,7 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(Message.MATCH_UPDATE_OR_FINISH, encoded.getInt(0));
 		SocketArray matchFinishedData = encoded.getArray(10);
 		Assertions.assertEquals(1, matchFinishedData.getInt(0));
-		Assertions.assertEquals(true, matchFinishedData.getBoolean(6));
+		Assertions.assertTrue(matchFinishedData.getBoolean(6));
 		Assertions.assertEquals(2, matchFinishedData.getInt(7));
 	}
 	
@@ -154,7 +156,7 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(1, moveData.getInt(0));
 		Assertions.assertEquals(2f, moveData.getFloat(1));
 		Assertions.assertEquals(3f, moveData.getFloat(2));
-		Assertions.assertEquals(true, moveData.getBoolean(3));
+		Assertions.assertTrue(moveData.getBoolean(3));
 	}
 	
 	@Test
@@ -173,7 +175,7 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(3f, teleportData.getFloat(2));
 		Assertions.assertEquals(4f, teleportData.getFloat(3));
 		Assertions.assertEquals(5f, teleportData.getFloat(4));
-		Assertions.assertEquals(true, teleportData.getBoolean(5));
+		Assertions.assertTrue(teleportData.getBoolean(5));
 	}
 
 	@Test
@@ -197,7 +199,7 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(encoded.getInt(1), 1);
 		
 		SocketArray updateData = encoded.getArray(2);
-		Assertions.assertEquals(true, updateData.getBoolean(7));
+		Assertions.assertTrue(updateData.getBoolean(7));
 		Assertions.assertEquals(1.1f, updateData.getFloat(1));
 	}
 	

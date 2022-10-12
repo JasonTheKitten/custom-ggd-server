@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.MatchSetupGameState;
+import everyos.ggd.server.map.MatchMap;
+import everyos.ggd.server.map.MapLoader;
 import everyos.ggd.server.message.Message;
 
 public class VanillaMatch implements Match {
@@ -13,13 +15,14 @@ public class VanillaMatch implements Match {
 	private static final int FRAME_DELAY = 16;
 	
 	private static final String[] AVAILABLE_MAPS = new String[] {
-		"map01", "map02", "map03", "map04"
+		"map01"/*, "map02", "map03", "map04"*/
 	};
 	
 	private final int id;
 	private final Player[] players = new Player[8];
 	private final MatchContext matchContext = new MatchContextImp();
 	private final String mapName = chooseMap();
+	private final MatchMap map = MapLoader.loadFromResourceByName(mapName);
 	
 	private GameState gameState = new MatchSetupGameState(matchContext);
 
@@ -104,6 +107,11 @@ public class VanillaMatch implements Match {
 		public void setGameState(GameState newGameState) {
 			gameState = newGameState;
 			gameState.start();
+		}
+		
+		@Override
+		public MatchMap getMap() {
+			return map;
 		}
 
 		@Override
