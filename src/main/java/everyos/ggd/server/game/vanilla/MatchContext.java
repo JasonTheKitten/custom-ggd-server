@@ -1,6 +1,7 @@
 package everyos.ggd.server.game.vanilla;
 
 import everyos.ggd.server.game.Player;
+import everyos.ggd.server.game.vanilla.state.game.GameState;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
 

@@ -1,7 +1,9 @@
 package everyos.ggd.server.message;
 
-public interface PlayerStateUpdate extends EntityStateUpdate {
+public interface PlayerStateUpdate {
 
+	int getEntityId();
+	
 	float getSpeed();
 	
 	int getGlowRadius();
@@ -13,8 +15,6 @@ public interface PlayerStateUpdate extends EntityStateUpdate {
 	Animation getAnimation();
 	
 	Emotion getEmotion();
-	
-	boolean isBot();
 	
 	public static enum Animation {
 		NONE,

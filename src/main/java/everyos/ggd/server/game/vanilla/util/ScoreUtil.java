@@ -1,6 +1,6 @@
 package everyos.ggd.server.game.vanilla.util;
 
-import everyos.ggd.server.game.vanilla.PlayerStats;
+import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 
 public final class ScoreUtil {
 

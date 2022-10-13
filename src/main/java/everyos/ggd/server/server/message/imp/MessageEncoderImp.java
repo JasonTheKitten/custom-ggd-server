@@ -12,6 +12,8 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
 import everyos.ggd.server.message.SpiritInitMessage;
+import everyos.ggd.server.message.SpiritStateUpdate;
+import everyos.ggd.server.message.SpiritStateUpdateMessage;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.server.message.MessageEncoder;
 import everyos.ggd.server.socket.SocketArray;
@@ -46,6 +48,8 @@ public class MessageEncoderImp implements MessageEncoder {
 			return encodeMatchStateUpdateOrFinishMessage(message);
 		case Message.ENTITY_MOVE:
 			return encodeEntityMoveMessage((EntityMoveMessage) message);
+		case Message.ENTITY_UPDATE:
+			return encodeEntityStateUpdateMessage(message);
 		case Message.ENTITY_TELEPORT:
 			return encodeEntityTeleportMessage((EntityTeleportMessage) message);
 		case Message.CLEAR_SESSION_DATA:
@@ -152,7 +156,7 @@ public class MessageEncoderImp implements MessageEncoder {
 		
 		SocketArray initStruct = createSocketArray();
 		initStruct.set(0, initData);
-		initStruct.set(1, encodeSpiritStateUpdate(message.getEntityId()));
+		initStruct.set(1, encodeSpiritStateUpdate(message.getStateUpdate()));
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, Message.ENTITY_INIT);
@@ -220,6 +224,20 @@ public class MessageEncoderImp implements MessageEncoder {
 		return encoded;
 	}
 	
+	private SocketArray encodeEntityStateUpdateMessage(Message message) {
+		return encodeSpiritStateUpdateMessage((SpiritStateUpdateMessage) message);
+	}
+	
+	private SocketArray encodeSpiritStateUpdateMessage(SpiritStateUpdateMessage message) {
+		SocketArray updateData = encodeSpiritStateUpdate(message.getUpdate());
+		
+		SocketArray encoded = createSocketArray();
+		encoded.set(0, Message.ENTITY_UPDATE);
+		encoded.set(12, updateData);
+		
+		return encoded;
+	}
+
 	private SocketArray encodeEntityTeleportMessage(EntityTeleportMessage message) {
 		SocketArray teleportData = createSocketArray();
 		teleportData.set(0, message.getEntityId());
@@ -257,11 +275,12 @@ public class MessageEncoderImp implements MessageEncoder {
 		return encoded;
 	}
 	
-	private SocketArray encodeSpiritStateUpdate(int entityId) {
+	private SocketArray encodeSpiritStateUpdate(SpiritStateUpdate stateUpdate) {
 		SocketArray updateData = createSocketArray();
+		updateData.set(0, stateUpdate.getTeam().ordinal() + 1);
 		
 		SocketArray encoded = createSocketArray();
-		encoded.set(0, entityId + 1);
+		encoded.set(0, stateUpdate.getEntityId() + 1);
 		encoded.set(1, 16);
 		encoded.set(3, updateData);
 		

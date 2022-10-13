@@ -19,6 +19,8 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
 import everyos.ggd.server.message.SpiritInitMessage;
+import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
+import everyos.ggd.server.message.SpiritStateUpdateMessage;
 import everyos.ggd.server.message.imp.ClearSessionDataMessageImp;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
 import everyos.ggd.server.message.imp.EntityMoveMessageImp;
@@ -31,6 +33,8 @@ import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.ServerConnectMessageImp;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
 import everyos.ggd.server.message.imp.SpiritInitMessageImp;
+import everyos.ggd.server.message.imp.SpiritStateUpdateImp;
+import everyos.ggd.server.message.imp.SpiritStateUpdateMessageImp;
 import everyos.ggd.server.physics.imp.PositionImp;
 import everyos.ggd.server.physics.imp.VelocityImp;
 import everyos.ggd.server.server.message.imp.MessageEncoderImp;
@@ -101,7 +105,6 @@ public class MessageEncoderTest {
 	public void canEncodeInitialPlayerStateMessage() {
 		PlayerStateUpdate stateUpdate = createSamplePlayerStateUpdate();
 		PlayerInitMessage message = new PlayerInitMessageImp(
-			5,
 			new PositionImp(1f, 2f),
 			true,
 			stateUpdate);
@@ -125,7 +128,8 @@ public class MessageEncoderTest {
 	public void canEncodeInitialSpiritStateMessage() {
 		SpiritInitMessage message = new SpiritInitMessageImp(
 			8,
-			new PositionImp(1f, 2f));
+			new PositionImp(1f, 2f),
+			new SpiritStateUpdateImp(8, SpiritTeam.PURPLE_TEAM));
 		SocketArray encoded = messageEncoder.encode(message);
 		Assertions.assertEquals(Message.ENTITY_INIT, encoded.getInt(0));
 		SocketArray initStruct = encoded.getArray(8);
@@ -179,6 +183,16 @@ public class MessageEncoderTest {
 	}
 	
 	@Test
+	@DisplayName("Can encode spirit state update message")
+	public void canEncodeSpiritStateUpdateMessage() {
+		SpiritStateUpdateMessage message = new SpiritStateUpdateMessageImp(
+			new SpiritStateUpdateImp(8, SpiritTeam.PURPLE_TEAM));
+		SocketArray encoded = messageEncoder.encode(message);
+		Assertions.assertEquals(Message.ENTITY_UPDATE, encoded.getInt(0));
+		assertCanEncodeSpiritStateUpdate(encoded.getArray(12));
+	}
+	
+	@Test
 	@DisplayName("Can encode entity teleport message")
 	public void canEncodeEntityTeleportMessage() {
 		EntityTeleportMessage message = new EntityTeleportMessageImp(
@@ -225,6 +239,9 @@ public class MessageEncoderTest {
 	private void assertCanEncodeSpiritStateUpdate(SocketArray encoded) {
 		Assertions.assertEquals(encoded.getInt(0), 9);
 		Assertions.assertEquals(encoded.getInt(1), 16);
+		
+		SocketArray updateData = encoded.getArray(3);
+		Assertions.assertEquals(3, updateData.getInt(0));
 	}
 	
 }

@@ -7,5 +7,7 @@ public interface SpiritInitMessage extends Message {
 	int getEntityId();
 
 	Position getInitialPosition();
+
+	SpiritStateUpdate getStateUpdate();
 	
 }

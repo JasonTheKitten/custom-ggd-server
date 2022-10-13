@@ -12,8 +12,8 @@ public class PlayerInitMessageImp implements PlayerInitMessage {
 	private final boolean isBot;
 	private final PlayerStateUpdate state;
 
-	public PlayerInitMessageImp(int characterId, Position position, boolean isBot, PlayerStateUpdate state) {
-		this.characterId = characterId;
+	public PlayerInitMessageImp(Position position, boolean isBot, PlayerStateUpdate state) {
+		this.characterId = state.getEntityId();
 		this.position = position;
 		this.isBot = isBot;
 		this.state = state;

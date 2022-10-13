@@ -1,4 +1,4 @@
-package everyos.ggd.server.game.vanilla;
+package everyos.ggd.server.game.vanilla.state.game;
 
 public interface GameState {
 	

@@ -1,11 +1,10 @@
-package everyos.ggd.server.game.vanilla.state;
+package everyos.ggd.server.game.vanilla.state.game;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import everyos.ggd.server.game.vanilla.GameState;
 import everyos.ggd.server.game.vanilla.MatchContext;
-import everyos.ggd.server.game.vanilla.PlayerStats;
+import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 import everyos.ggd.server.game.vanilla.util.ScoreUtil;
 import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward;
 import everyos.ggd.server.message.imp.MatchFinishedMessageImp;

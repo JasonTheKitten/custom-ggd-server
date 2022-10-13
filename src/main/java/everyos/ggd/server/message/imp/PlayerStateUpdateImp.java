@@ -20,11 +20,6 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	}
 	
 	@Override
-	public EntityType getEntityType() {
-		return EntityType.PLAYER;
-	}
-	
-	@Override
 	public float getSpeed() {
 		return this.speed;
 	}
@@ -56,12 +51,6 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	public Emotion getEmotion() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean isBot() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }
