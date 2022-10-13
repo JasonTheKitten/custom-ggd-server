@@ -10,6 +10,7 @@ import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.game.play.GameTimer;
 import everyos.ggd.server.game.vanilla.state.game.play.PhysicsTracker;
 import everyos.ggd.server.game.vanilla.state.game.play.PlayerSpiritPhysicsBodiesView;
+import everyos.ggd.server.game.vanilla.state.game.play.SpiritTracker;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
 import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
@@ -17,23 +18,21 @@ import everyos.ggd.server.game.vanilla.util.ScoreUtil;
 import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.Message;
-import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
-import everyos.ggd.server.physics.Velocity;
-import everyos.ggd.server.physics.imp.PositionImp;
-import everyos.ggd.server.physics.imp.VelocityImp;
 
 public class PlayGameState implements GameState {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final MatchContext matchContext;
 	private final PlayerState[] playerStates;
+	@SuppressWarnings("unused")
 	private final List<SpiritState> spiritStates;
 	
 	private final GameTimer timer = new GameTimer();
 	private final PhysicsTracker physicsTracker;
+	private final SpiritTracker spiritTracker;
 	
 	public PlayGameState(MatchContext matchContext, PlayerState[] playerStates, List<SpiritState> spiritStates) {
 		this.matchContext = matchContext;
@@ -42,6 +41,7 @@ public class PlayGameState implements GameState {
 		
 		this.physicsTracker = new PhysicsTracker(
 			new PlayerSpiritPhysicsBodiesView(playerStates, spiritStates));
+		this.spiritTracker = new SpiritTracker(matchContext, playerStates, spiritStates);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class PlayGameState implements GameState {
 		
 		physicsTracker.tick();
 		processPlayerMessages();
-		processSpiritUpdates();
+		spiritTracker.tick();
 		processPlayerPositions();
 	}
 
@@ -126,99 +126,7 @@ public class PlayGameState implements GameState {
 	}
 
 	private void handlePlayerPositionUpdate(int playerEntityId, Position playerPosition) {
-		givePlayerNearbySpirits(playerEntityId, playerPosition);
-		updateSpiritTrail(playerEntityId, playerPosition);
-	}
-
-	private void givePlayerNearbySpirits(int playerEntityId, Position playerPosition) {
-		for (SpiritState spiritState: spiritStates) {
-			if (spiritState.getOwnerEntityId() == -1 && playerInRangeOfSpirit(playerEntityId, playerPosition, spiritState)) {
-				spiritState.setTeam(getSpiritTeam(playerEntityId));
-				spiritState.setOwnerEntityId(playerEntityId);
-				playerStates[playerEntityId]
-					.getSpiritList()
-					.add(spiritState);
-			}
-		}
-	}
-	
-	private void updateSpiritTrail(int playerEntityId, Position playerPosition) {
-		PlayerState playerState = playerStates[playerEntityId];
-		List<SpiritState> spiritTrail = playerState.getSpiritList();
-		if (spiritTrail.isEmpty()) {
-			return;
-		}
-		
-		PhysicsBody playerPhysicsBody = playerState.getPhysicsBody();
-		{
-			PhysicsBody spiritPhysicsBody = spiritTrail.get(0).getPhysicsBody();
-			Position nextSpiritPosition = playerState.getPhysicsBody().getCurrentPosition();
-			spiritPhysicsBody.setCurrentPosition(
-				calculateNewTrailSpiritPosition(spiritPhysicsBody.getCurrentPosition(), nextSpiritPosition));
-			spiritPhysicsBody.setCurrentVelocity(
-				calculateNewTrailSpiritVelocity(
-					spiritPhysicsBody.getCurrentPosition(),
-					nextSpiritPosition,
-					playerPhysicsBody.getCurrentVelocity()));
-		}
-		for (int i = 1; i < spiritTrail.size(); i++) {
-			PhysicsBody spiritPhysicsBody = spiritTrail.get(i).getPhysicsBody();
-			Position nextSpiritPosition = spiritTrail.get(i-1).getPhysicsBody().getCurrentPosition();
-			spiritPhysicsBody.setCurrentPosition(
-					calculateNewTrailSpiritPosition(spiritPhysicsBody.getCurrentPosition(), nextSpiritPosition));
-		}
-	}
-
-	private SpiritTeam getSpiritTeam(int playerEntityId) {
-		Player[] players = matchContext.getPlayers();
-		return playerEntityId < players.length / 2 ?
-			SpiritTeam.GREEN_TEAM :
-			SpiritTeam.PURPLE_TEAM;
-	}
-
-	private boolean playerInRangeOfSpirit(int playerEntityId, Position playerPosition, SpiritState spiritState) {
-		//TODO: Magnetism
-		Position spiritPosition = spiritState.getPhysicsBody().getCurrentPosition();
-		return getDistanceBetweenPositions(playerPosition, spiritPosition) <= 3f;
-	}
-	
-	private Position calculateNewTrailSpiritPosition(Position currentPosition, Position nextSpiritPosition) {
-		float totalDistance = getDistanceBetweenPositions(currentPosition, nextSpiritPosition);
-		float xDistance = currentPosition.getX() - nextSpiritPosition.getX();
-		float yDistance = currentPosition.getY() - nextSpiritPosition.getY();
-		float xNewDistance = (xDistance / totalDistance) * 3;
-		float yNewDistance = (yDistance / totalDistance) * 3;
-		float xComponent = nextSpiritPosition.getX() + xNewDistance;
-		float yComponent = nextSpiritPosition.getY() + yNewDistance;
-		
-		return new PositionImp(xComponent, yComponent);
-	}
-	
-	private Velocity calculateNewTrailSpiritVelocity(Position currentPosition, Position nextSpiritPosition, Velocity playerVelocity) {
-		float totalDistance = getDistanceBetweenPositions(currentPosition, nextSpiritPosition);
-		float totalVelocity = (float) Math.sqrt(
-			playerVelocity.getX() * playerVelocity.getX() +
-			playerVelocity.getY() * playerVelocity.getY());
-		float xDistance = currentPosition.getX() - nextSpiritPosition.getX();
-		float yDistance = currentPosition.getY() - nextSpiritPosition.getY();
-		float xNewDistance = xDistance / totalDistance;
-		float yNewDistance = yDistance / totalDistance;
-		float xComponent = xNewDistance * totalVelocity;
-		float yComponent = yNewDistance * totalVelocity;
-		
-		return new VelocityImp(xComponent, yComponent);
-	}
-
-	private float getDistanceBetweenPositions(Position position1, Position position2) {
-		float xComponent = Math.abs(position1.getX() - position2.getX());
-		float yComponent = Math.abs(position1.getY() - position2.getY());
-		return (float) Math.sqrt(yComponent*yComponent + xComponent*xComponent);
-	}
-	
-	private void processSpiritUpdates() {
-		for (SpiritState spiritState: spiritStates) {
-			matchContext.broadcastMessages(spiritState.getQueuedMessages());
- 		}
+		spiritTracker.handlePlayerPositionUpdate(playerEntityId, playerPosition);
 	}
 
 }
