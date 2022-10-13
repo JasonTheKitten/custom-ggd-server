@@ -5,6 +5,7 @@ import java.util.List;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
+import everyos.ggd.server.game.vanilla.state.player.PlayerState.SpiritGainReason;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
 import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.game.vanilla.util.MathUtil;
@@ -44,9 +45,11 @@ public class SpiritTracker {
 			if (spiritState.getOwnerEntityId() == -1 && playerInRangeOfSpirit(playerEntityId, playerPosition, spiritState)) {
 				spiritState.setTeam(getSpiritTeam(playerEntityId));
 				spiritState.setOwnerEntityId(playerEntityId);
-				playerStates[playerEntityId]
+				PlayerState playerState = playerStates[playerEntityId];
+				playerState
 					.getSpiritList()
 					.add(spiritState);
+				playerState.gain(1, SpiritGainReason.COLLECT_SPIRIT);
 			}
 		}
 	}
@@ -65,14 +68,15 @@ public class SpiritTracker {
 	}
 	
 	private void handleBaseCollision(int playerEntityId, Position playerPosition) {
-		if (!playerIsOnBase(playerEntityId, playerPosition)) {
-			return;
-		}
-		
 		PlayerState playerState = playerStates[playerEntityId];
 		List<SpiritState> spiritStates = playerState.getSpiritList();
-		playerState.getStats().incrementScore(spiritStates.size());
+		if (spiritStates.size() == 0 || !playerIsOnBase(playerEntityId, playerPosition)) {
+			return;
+		}
+		int points = spiritStates.size();
+		playerState.getStats().incrementScore(points);
 		freeSpirits(spiritStates);
+		playerState.gain(points, SpiritGainReason.GOAL_RETURN);
 	}
 	
 	private boolean playerIsOnBase(int playerEntityId, Position playerPosition) {

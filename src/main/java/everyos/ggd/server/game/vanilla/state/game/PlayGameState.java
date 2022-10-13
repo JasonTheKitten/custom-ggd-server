@@ -61,9 +61,17 @@ public class PlayGameState implements GameState {
 		processPlayerMessages();
 		spiritTracker.tick();
 		processPlayerPositions();
+		processPlayerStateUpdates();
 		
 		if (timer.changed()) {
 			sendMatchUpdate();
+		}
+	}
+
+	private void processPlayerStateUpdates() {
+		for (PlayerState playerState: playerStates) {
+			matchContext.broadcastMessages(
+				playerState.getQueuedMessages());
 		}
 	}
 

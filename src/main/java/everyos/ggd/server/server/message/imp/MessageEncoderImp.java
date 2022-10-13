@@ -9,12 +9,14 @@ import everyos.ggd.server.message.MatchStateUpdateMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
+import everyos.ggd.server.message.PlayerStateUpdateMessage;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
 import everyos.ggd.server.message.SpiritInitMessage;
 import everyos.ggd.server.message.SpiritStateUpdate;
 import everyos.ggd.server.message.SpiritStateUpdateMessage;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
+import everyos.ggd.server.message.imp.PlayerStateUpdateMessageImp;
 import everyos.ggd.server.server.message.MessageEncoder;
 import everyos.ggd.server.socket.SocketArray;
 import everyos.ggd.server.socket.decoder.SocketDecoder;
@@ -225,7 +227,21 @@ public class MessageEncoderImp implements MessageEncoder {
 	}
 	
 	private SocketArray encodeEntityStateUpdateMessage(Message message) {
-		return encodeSpiritStateUpdateMessage((SpiritStateUpdateMessage) message);
+		if (message instanceof PlayerStateUpdateMessageImp) {
+			return encodePlayerStateUpdateMessage((PlayerStateUpdateMessage) message);
+		} else {
+			return encodeSpiritStateUpdateMessage((SpiritStateUpdateMessage) message);
+		}
+	}
+	
+	private SocketArray encodePlayerStateUpdateMessage(PlayerStateUpdateMessage message) {
+		SocketArray updateData = encodePlayerStateUpdate(message.getUpdate());
+		
+		SocketArray encoded = createSocketArray();
+		encoded.set(0, Message.ENTITY_UPDATE);
+		encoded.set(12, updateData);
+		
+		return encoded;
 	}
 	
 	private SocketArray encodeSpiritStateUpdateMessage(SpiritStateUpdateMessage message) {
@@ -263,9 +279,19 @@ public class MessageEncoderImp implements MessageEncoder {
 	}
 	
 	private SocketArray encodePlayerStateUpdate(PlayerStateUpdate stateUpdate) {
+		SocketArray emotionData = createSocketArray();
+		emotionData.set(0, stateUpdate.getEmotion().ordinal());
+		
+		SocketArray animationData = createSocketArray();
+		animationData.set(0, stateUpdate.getAnimation().ordinal());
+		animationData.set(1, stateUpdate.getAnimationAmount());
+		
 		SocketArray updateData = createSocketArray();
 		updateData.set(1, stateUpdate.getSpeed());
+		updateData.set(5, stateUpdate.getNumSpiritsHeld());
 		updateData.set(7, stateUpdate.isConnected());
+		updateData.set(13, animationData);
+		updateData.set(14, emotionData);
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, stateUpdate.getEntityId() + 1);

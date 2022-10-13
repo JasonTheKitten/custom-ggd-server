@@ -14,6 +14,8 @@ public interface PlayerStateUpdate {
 	
 	Animation getAnimation();
 	
+	int getAnimationAmount();
+	
 	Emotion getEmotion();
 	
 	public static enum Animation {

@@ -11,11 +11,14 @@ import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.MatchFinishedMessage;
 import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward;
+import everyos.ggd.server.message.PlayerStateUpdate.Animation;
+import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
 import everyos.ggd.server.message.MatchInitMessage;
 import everyos.ggd.server.message.MatchStateUpdateMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
+import everyos.ggd.server.message.PlayerStateUpdateMessage;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
 import everyos.ggd.server.message.SpiritInitMessage;
@@ -30,6 +33,7 @@ import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
+import everyos.ggd.server.message.imp.PlayerStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.ServerConnectMessageImp;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
 import everyos.ggd.server.message.imp.SpiritInitMessageImp;
@@ -183,6 +187,16 @@ public class MessageEncoderTest {
 	}
 	
 	@Test
+	@DisplayName("Can encode player state update message")
+	public void canEncodePlayerStateUpdateMessage() {
+		PlayerStateUpdateMessage message = new PlayerStateUpdateMessageImp(
+			createSamplePlayerStateUpdate());
+		SocketArray encoded = messageEncoder.encode(message);
+		Assertions.assertEquals(Message.ENTITY_UPDATE, encoded.getInt(0));
+		assertCanEncodePlayerStateUpdate(encoded.getArray(12));
+	}
+	
+	@Test
 	@DisplayName("Can encode spirit state update message")
 	public void canEncodeSpiritStateUpdateMessage() {
 		SpiritStateUpdateMessage message = new SpiritStateUpdateMessageImp(
@@ -224,6 +238,9 @@ public class MessageEncoderTest {
 			.setEntityId(5)
 			.setConnected(true)
 			.setSpeed(1.1f)
+			.setNumSpiritsHeld(15)
+			.setAnimation(Animation.BUDDY_BONUS, 15)
+			.setEmotion(Emotion.HAPPY)
 			.build();
 	}
 	
@@ -234,6 +251,14 @@ public class MessageEncoderTest {
 		SocketArray updateData = encoded.getArray(2);
 		Assertions.assertTrue(updateData.getBoolean(7));
 		Assertions.assertEquals(1.1f, updateData.getFloat(1));
+		Assertions.assertEquals(15, updateData.getInt(5));
+		
+		SocketArray animationData = updateData.getArray(13);
+		Assertions.assertEquals(3, animationData.getInt(0));
+		Assertions.assertEquals(15, animationData.getInt(1));
+		
+		SocketArray emotionData = updateData.getArray(14);
+		Assertions.assertEquals(1, emotionData.getInt(0));
 	}
 	
 	private void assertCanEncodeSpiritStateUpdate(SocketArray encoded) {
