@@ -12,6 +12,7 @@ import everyos.ggd.server.game.vanilla.state.spirit.SpiritStateImp;
 import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
@@ -57,8 +58,10 @@ public class MatchSetupGameState implements GameState {
 			player.onMessageFromServer(matchInitMessage);
 			PlayerState playerState = new PlayerStateImp(i);
 			playerStates[i] = playerState;
-			matchContext.broadcast(createInitialPlayerStateUpdateMessage(
-				player, playerState.createUpdateInfo()));
+			PlayerInitMessage initialPlayerStateMessage = createInitialPlayerStateMessage(
+				player, playerState.createUpdateInfo());
+			playerState.setPosition(initialPlayerStateMessage.getInitialPosition());
+			matchContext.broadcast(initialPlayerStateMessage);
 			player.onMessageFromServer(createSessionDataSetMessage(i));
 		}
 		
@@ -69,7 +72,7 @@ public class MatchSetupGameState implements GameState {
 		return new SessionDataSetMessageImp(playerNumber, matchContext.getMatchId(), "shard0");
 	}
 
-	private Message createInitialPlayerStateUpdateMessage(Player player, PlayerStateUpdate playerStateUpdate) {
+	private PlayerInitMessage createInitialPlayerStateMessage(Player player, PlayerStateUpdate playerStateUpdate) {
 		return new PlayerInitMessageImp(
 			getPlayerStartPosition(matchContext.getMap(), playerStateUpdate.getEntityId()),
 			player.isBot(),

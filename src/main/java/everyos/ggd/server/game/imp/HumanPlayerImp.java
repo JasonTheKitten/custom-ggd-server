@@ -18,8 +18,8 @@ public class HumanPlayerImp implements HumanPlayer {
 		this.playerId = playerId;
 		this.authenticationKey = authenticationKey;
 		this.isBot = isBot;
-		this.messageFromServerQueue = new ArrayList<>();
-		this.messageFromClientQueue = new ArrayList<>();
+		this.messageFromServerQueue = new ArrayList<>(1);
+		this.messageFromClientQueue = new ArrayList<>(1);
 	}
 	
 	@Override
@@ -40,16 +40,24 @@ public class HumanPlayerImp implements HumanPlayer {
 	
 	@Override
 	public void onMessageFromServer(Message message) {
-		messageFromServerQueue.add(message);
+		if (message == null) {
+			// If a null message contaminates the queue, it breaks the entire game
+			throw new NullPointerException();
+		}
+		synchronized (messageFromServerQueue) {
+			messageFromServerQueue.add(message);
+		}
 	}
 
 	//TODO: Re-send match info upon socket reconnect
 	@Override
 	public List<Message> getQueuedMessagesFromServer() {
-		List<Message> messages = List.copyOf(messageFromServerQueue);
-		messageFromServerQueue.clear();
-		
-		return messages;
+		synchronized (messageFromServerQueue) {
+			List<Message> messages = List.copyOf(messageFromServerQueue);
+			messageFromServerQueue.clear();
+			
+			return messages;
+		}
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 package everyos.ggd.server.message;
 
-import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.physics.Velocity;
 
 public interface EntityMoveMessage extends Message {
 
 	int getEntityId();
 	
-	Position getRelativePosition();
+	Velocity getVelocity();
 	
 	boolean isMoving();
 	

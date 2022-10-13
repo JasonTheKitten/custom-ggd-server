@@ -2,17 +2,17 @@ package everyos.ggd.server.message.imp;
 
 import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.Message;
-import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.physics.Velocity;
 
 public class EntityMoveMessageImp implements EntityMoveMessage{
 
 	private final int entityId;
-	private final Position relativePosition;
+	private final Velocity velocity;
 	private final boolean isMoving;
 
-	public EntityMoveMessageImp(int entityId, Position relativePosition, boolean isMoving) {
+	public EntityMoveMessageImp(int entityId, Velocity velocity, boolean isMoving) {
 		this.entityId = entityId;
-		this.relativePosition = relativePosition;
+		this.velocity = velocity;
 		this.isMoving = isMoving;
 	}
 	
@@ -27,8 +27,8 @@ public class EntityMoveMessageImp implements EntityMoveMessage{
 	}
 
 	@Override
-	public Position getRelativePosition() {
-		return this.relativePosition;
+	public Velocity getVelocity() {
+		return this.velocity;
 	}
 
 	@Override

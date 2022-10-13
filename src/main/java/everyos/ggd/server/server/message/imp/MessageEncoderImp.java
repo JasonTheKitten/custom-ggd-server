@@ -211,14 +211,14 @@ public class MessageEncoderImp implements MessageEncoder {
 	
 	private SocketArray encodeEntityMoveMessage(EntityMoveMessage message) {
 		SocketArray moveData = createSocketArray();
-		moveData.set(0, message.getEntityId());
-		moveData.set(1, message.getRelativePosition().getX());
-		moveData.set(2, message.getRelativePosition().getY());
+		moveData.set(0, message.getEntityId() + 1);
+		moveData.set(1, message.getVelocity().getX());
+		moveData.set(2, message.getVelocity().getY());
 		moveData.set(3, message.isMoving());
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, Message.ENTITY_MOVE);
-		encoded.set(1, message.getEntityId());
+		encoded.set(1, message.getEntityId() + 1);
 		encoded.set(11, moveData);
 		
 		return encoded;
@@ -240,7 +240,7 @@ public class MessageEncoderImp implements MessageEncoder {
 
 	private SocketArray encodeEntityTeleportMessage(EntityTeleportMessage message) {
 		SocketArray teleportData = createSocketArray();
-		teleportData.set(0, message.getEntityId());
+		teleportData.set(0, message.getEntityId() + 1);
 		teleportData.set(1, message.getPosition().getX());
 		teleportData.set(2, message.getPosition().getY());
 		teleportData.set(3, message.getVelocity().getX());
@@ -249,7 +249,7 @@ public class MessageEncoderImp implements MessageEncoder {
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, Message.ENTITY_TELEPORT);
-		encoded.set(1, message.getEntityId());
+		encoded.set(1, message.getEntityId() + 1);
 		encoded.set(13, teleportData);
 		
 		return encoded;

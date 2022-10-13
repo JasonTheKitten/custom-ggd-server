@@ -171,12 +171,12 @@ public class MessageEncoderTest {
 	@DisplayName("Can encode entity move message")
 	public void canEncodeEntityMoveMessage() {
 		EntityMoveMessage message = new EntityMoveMessageImp(
-			1, new PositionImp(2f, 3f), true);
+			1, new VelocityImp(2f, 3f), true);
 		SocketArray encoded = messageEncoder.encode(message);
 		Assertions.assertEquals(Message.ENTITY_MOVE, encoded.getInt(0));
-		Assertions.assertEquals(1, encoded.getInt(1));
+		Assertions.assertEquals(2, encoded.getInt(1));
 		SocketArray moveData = encoded.getArray(11);
-		Assertions.assertEquals(1, moveData.getInt(0));
+		Assertions.assertEquals(2, moveData.getInt(0));
 		Assertions.assertEquals(2f, moveData.getFloat(1));
 		Assertions.assertEquals(3f, moveData.getFloat(2));
 		Assertions.assertTrue(moveData.getBoolean(3));
@@ -201,9 +201,9 @@ public class MessageEncoderTest {
 			true);
 		SocketArray encoded = messageEncoder.encode(message);
 		Assertions.assertEquals(Message.ENTITY_TELEPORT, encoded.getInt(0));
-		Assertions.assertEquals(1, encoded.getInt(1));
+		Assertions.assertEquals(2, encoded.getInt(1));
 		SocketArray teleportData = encoded.getArray(13);
-		Assertions.assertEquals(1, teleportData.getInt(0));
+		Assertions.assertEquals(2, teleportData.getInt(0));
 		Assertions.assertEquals(2f, teleportData.getFloat(1));
 		Assertions.assertEquals(3f, teleportData.getFloat(2));
 		Assertions.assertEquals(4f, teleportData.getFloat(3));

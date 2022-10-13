@@ -47,11 +47,11 @@ public class MessageDecoderTest {
 		array.set(11, moveData);
 		
 		EntityMoveMessage message = (EntityMoveMessage) messageDecoder.decode(array);
-		Assertions.assertEquals(1, message.getEntityId());
+		Assertions.assertEquals(0, message.getEntityId());
 		Assertions.assertEquals(true, message.isMoving());
-		Position position = message.getRelativePosition();
-		Assertions.assertEquals(2f, position.getX());
-		Assertions.assertEquals(3f, position.getY());
+		Velocity velocity = message.getVelocity();
+		Assertions.assertEquals(2f, velocity.getX());
+		Assertions.assertEquals(3f, velocity.getY());
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class MessageDecoderTest {
 		
 		
 		EntityTeleportMessage message = (EntityTeleportMessage) messageDecoder.decode(array);
-		Assertions.assertEquals(1, message.getEntityId());
+		Assertions.assertEquals(0, message.getEntityId());
 		Assertions.assertEquals(true, message.isMoving());
 		Position position = message.getPosition();
 		Assertions.assertEquals(2f, position.getX());

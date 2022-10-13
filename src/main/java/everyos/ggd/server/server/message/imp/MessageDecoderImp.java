@@ -31,16 +31,16 @@ public class MessageDecoderImp implements MessageDecoder {
 	}
 
 	private Message decodeEntityMoveMessage(SocketArray encoded) {
-		int playerId = encoded.getInt(1);
+		int playerId = encoded.getInt(1) - 1;
 		SocketArray moveData = encoded.getArray(11);
-		Position position = new PositionImp(moveData.getFloat(1), moveData.getFloat(2));
+		Velocity velocity = new VelocityImp(moveData.getFloat(1), moveData.getFloat(2));
 		boolean isMoving = moveData.getBoolean(3);
 		
-		return new EntityMoveMessageImp(playerId, position, isMoving);
+		return new EntityMoveMessageImp(playerId, velocity, isMoving);
 	}
 	
 	private Message decodeEntityTeleportMessage(SocketArray encoded) {
-		int playerId = encoded.getInt(1);
+		int playerId = encoded.getInt(1) - 1;
 		SocketArray teleportData = encoded.getArray(13);
 		Position position = new PositionImp(teleportData.getFloat(1), teleportData.getFloat(2));
 		Velocity velocity = new VelocityImp(teleportData.getFloat(3), teleportData.getFloat(4));

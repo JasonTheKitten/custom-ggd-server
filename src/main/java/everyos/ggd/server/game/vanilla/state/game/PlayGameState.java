@@ -18,6 +18,8 @@ import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.SpiritStateUpdateMessageImp;
 import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.physics.Velocity;
+import everyos.ggd.server.physics.imp.PositionImp;
 
 public class PlayGameState implements GameState {
 	
@@ -49,8 +51,10 @@ public class PlayGameState implements GameState {
 			return;
 		}
 		
+		updatePlayerPositions();
 		processPlayerMessages();
 		processSpiritUpdates();
+		processPlayerPositions();
 	}
 
 	private void sendMatchUpdate() {
@@ -74,6 +78,21 @@ public class PlayGameState implements GameState {
 		return GAME_LENGTH_SECONDS - (int) ((System.currentTimeMillis() - timerStarted)/1000);
 	}
 	
+	private void updatePlayerPositions() {
+		for (PlayerState playerState: playerStates) {
+			updatePlayerPosition(playerState);
+		}
+	}
+	
+	private void updatePlayerPosition(PlayerState playerState) {
+		Position initialPosition = playerState.getPosition();
+		Velocity velocity = playerState.getVelocity();
+		Position newPosition = new PositionImp(
+			initialPosition.getX() + velocity.getX()/60,	
+			initialPosition.getY() + velocity.getY()/60);
+		playerState.setPosition(newPosition);
+	}
+
 	private void processPlayerMessages() {
 		Player[] players = matchContext.getPlayers();
 		for (Player player: players) {
@@ -98,11 +117,25 @@ public class PlayGameState implements GameState {
 
 	private void processEntityMoveMessage(EntityMoveMessage message, int playerId) {
 		matchContext.rebroadcast(message, playerId);
+		int playerEntityId = message.getEntityId();
+		playerStates[playerEntityId].setVelocity(message.getVelocity());
 	}
 	
 	private void processEntityTeleportMessage(EntityTeleportMessage message, int playerId) {
 		matchContext.rebroadcast(message, playerId);
-		givePlayerNearbySpirits(message.getEntityId(), message.getPosition());
+		int playerEntityId = message.getEntityId();
+		playerStates[playerEntityId].setPosition(message.getPosition());
+		playerStates[playerEntityId].setVelocity(message.getVelocity());
+	}
+	
+	void processPlayerPositions() {
+		for (PlayerState playerState: playerStates) {
+			handlePlayerPositionUpdate(playerState.getEntityId(), playerState.getPosition());
+		}
+	}
+
+	private void handlePlayerPositionUpdate(int playerEntityId, Position playerPosition) {
+		givePlayerNearbySpirits(playerEntityId, playerPosition);
 	}
 
 	private void givePlayerNearbySpirits(int playerEntityId, Position playerPosition) {
