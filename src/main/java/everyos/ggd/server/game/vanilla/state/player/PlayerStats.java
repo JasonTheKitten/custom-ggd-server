@@ -4,6 +4,6 @@ public interface PlayerStats {
 
 	int getScore();
 
-	void setScore(int score);
+	void incrementScore(int score);
 	
 }

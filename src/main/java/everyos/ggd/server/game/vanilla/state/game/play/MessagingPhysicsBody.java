@@ -13,9 +13,14 @@ import everyos.ggd.server.physics.imp.VelocityImp;
 
 public class MessagingPhysicsBody implements PhysicsBody {
 
-	private Position position = new PositionImp(0, 0);
-	private Velocity velocity = new VelocityImp(0, 0);
-	private ChangeLevel changeLevel = ChangeLevel.NONE;
+	private Position position;
+	private Velocity velocity;
+	private ChangeLevel changeLevel;
+	
+	public MessagingPhysicsBody() {
+		reset();
+		changeLevel = ChangeLevel.NONE;
+	}
 	
 	@Override
 	public Position getCurrentPosition() {
@@ -48,6 +53,12 @@ public class MessagingPhysicsBody implements PhysicsBody {
 		default:
 			return List.of();
 		}
+	}
+	
+	public void reset() {
+		position = new PositionImp(0, 0);
+		velocity = new VelocityImp(0, 0);
+		changeLevel = ChangeLevel.TELEPORT;
 	}
 	
 	private enum ChangeLevel {

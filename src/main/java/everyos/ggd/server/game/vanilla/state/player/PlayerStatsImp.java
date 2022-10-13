@@ -10,7 +10,7 @@ public class PlayerStatsImp implements PlayerStats {
 	}
 	
 	@Override
-	public void setScore(int score) {
+	public void incrementScore(int score) {
 		this.score += score;
 	}
 

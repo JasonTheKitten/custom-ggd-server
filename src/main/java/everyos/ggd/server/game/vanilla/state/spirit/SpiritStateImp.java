@@ -11,23 +11,24 @@ import everyos.ggd.server.message.imp.SpiritStateUpdateImp;
 import everyos.ggd.server.message.imp.SpiritStateUpdateMessageImp;
 import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.physics.imp.VelocityImp;
 
 public class SpiritStateImp implements SpiritState {
 
 	private final int entityId;
 	private final Position initialPosition;
-	private MessagingPhysicsBody physicsBody = new MessagingPhysicsBody();
+	private final MessagingPhysicsBody physicsBody = new MessagingPhysicsBody();
 	
 	private boolean needsInit = true;
-	private boolean needsUpdate = false;
+	private boolean needsUpdate;
 	
-	private int ownerEntityId = -1;
-	private SpiritTeam team = SpiritTeam.NO_TEAM;
+	private int ownerEntityId;
+	private SpiritTeam team;
 
 	public SpiritStateImp(int entityId, Position initialPosition) {
 		this.entityId = entityId;
 		this.initialPosition = initialPosition;
-		physicsBody.setCurrentPosition(initialPosition);;
+		reset();
 	}
 	
 	@Override
@@ -74,12 +75,13 @@ public class SpiritStateImp implements SpiritState {
 			needsInit = false;
 			needsUpdate = false;
 			queuedMessages.add(createSpiritInitMessage());
+		} else {
+			if (needsUpdate) {
+				needsUpdate = false;
+				queuedMessages.add(createSpiritUpdateMessage());
+			}
+			queuedMessages.addAll(physicsBody.getQueuedMessages(entityId));
 		}
-		if (needsUpdate) {
-			needsUpdate = false;
-			queuedMessages.add(createSpiritUpdateMessage());
-		}
-		queuedMessages.addAll(physicsBody.getQueuedMessages(entityId));
 		
 		return queuedMessages;
 	}
@@ -93,6 +95,18 @@ public class SpiritStateImp implements SpiritState {
 
 	private Message createSpiritUpdateMessage() {
 		return new SpiritStateUpdateMessageImp(new SpiritStateUpdateImp(entityId, team));
+	}
+
+	@Override
+	public void reset() {
+		physicsBody.reset();
+		if (initialPosition != null) {
+			physicsBody.setCurrentPosition(initialPosition);
+		}
+		physicsBody.setCurrentVelocity(new VelocityImp(0, 0));
+		ownerEntityId = -1;
+		team = SpiritTeam.NO_TEAM;
+		needsUpdate = true;
 	}
 
 }

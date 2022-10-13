@@ -61,6 +61,10 @@ public class PlayGameState implements GameState {
 		processPlayerMessages();
 		spiritTracker.tick();
 		processPlayerPositions();
+		
+		if (timer.changed()) {
+			sendMatchUpdate();
+		}
 	}
 
 	private void sendMatchUpdate() {

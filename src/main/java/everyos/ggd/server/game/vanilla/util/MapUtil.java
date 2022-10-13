@@ -34,6 +34,13 @@ public final class MapUtil {
 		return new PositionImp(xComponent, yComponent);
 	}
 	
+	public static Location positionToLocation(MatchMap map, Position position) {
+		float xComponent = position.getX()/2 + map.getWidth() / 2f;
+		float yComponent = position.getY()/2 + map.getHeight() / 2f;
+		
+		return new LocationImp((int) xComponent, (int) yComponent);
+	}
+	
 	private static Location[] getFilteredTileLocations(MatchMap map, Function<Tile, Boolean> filter) {
 		List<Location> locations = new ArrayList<>();
 		for (int x = 0; x < map.getWidth(); x++) {

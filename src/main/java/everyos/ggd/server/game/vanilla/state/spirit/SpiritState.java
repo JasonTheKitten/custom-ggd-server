@@ -24,5 +24,7 @@ public interface SpiritState {
 	void setTeam(SpiritTeam team);
 
 	List<Message> getQueuedMessages();
+
+	void reset();
 	
 }
