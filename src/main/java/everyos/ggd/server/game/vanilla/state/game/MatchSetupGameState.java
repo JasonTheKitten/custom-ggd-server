@@ -17,7 +17,6 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
-import everyos.ggd.server.message.imp.SpiritInitMessageImp;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.Position;
 
@@ -60,7 +59,8 @@ public class MatchSetupGameState implements GameState {
 			playerStates[i] = playerState;
 			PlayerInitMessage initialPlayerStateMessage = createInitialPlayerStateMessage(
 				player, playerState.createUpdateInfo());
-			playerState.setPosition(initialPlayerStateMessage.getInitialPosition());
+			playerState.getPhysicsBody().setCurrentPosition(
+				initialPlayerStateMessage.getInitialPosition());
 			matchContext.broadcast(initialPlayerStateMessage);
 			player.onMessageFromServer(createSessionDataSetMessage(i));
 		}
@@ -108,9 +108,7 @@ public class MatchSetupGameState implements GameState {
 			int entityId = nextEntityId++;
 			SpiritState state = new SpiritStateImp(entityId, spiritPosition);
 			states.add(state);
-			Message message = new SpiritInitMessageImp(
-				entityId, spiritPosition, state.createUpdate());
-			matchContext.broadcast(message);
+			matchContext.broadcastMessages(state.getQueuedMessages());
 		}
 		
 		return states;

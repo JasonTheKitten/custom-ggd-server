@@ -1,23 +1,33 @@
 package everyos.ggd.server.game.vanilla.state.spirit;
 
-import everyos.ggd.server.message.SpiritStateUpdate;
+import java.util.ArrayList;
+import java.util.List;
+
+import everyos.ggd.server.game.vanilla.state.game.play.MessagingPhysicsBody;
+import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
+import everyos.ggd.server.message.imp.SpiritInitMessageImp;
 import everyos.ggd.server.message.imp.SpiritStateUpdateImp;
+import everyos.ggd.server.message.imp.SpiritStateUpdateMessageImp;
+import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 
 public class SpiritStateImp implements SpiritState {
 
 	private final int entityId;
 	private final Position initialPosition;
+	private MessagingPhysicsBody physicsBody = new MessagingPhysicsBody();
 	
-	private boolean needsUpdate = true;
+	private boolean needsInit = true;
+	private boolean needsUpdate = false;
+	
+	private int ownerEntityId = -1;
 	private SpiritTeam team = SpiritTeam.NO_TEAM;
-	private Position currentPosition;
 
 	public SpiritStateImp(int entityId, Position initialPosition) {
 		this.entityId = entityId;
 		this.initialPosition = initialPosition;
-		this.currentPosition = initialPosition;
+		physicsBody.setCurrentPosition(initialPosition);;
 	}
 	
 	@Override
@@ -27,8 +37,12 @@ public class SpiritStateImp implements SpiritState {
 
 	@Override
 	public int getOwnerEntityId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ownerEntityId;
+	}
+	
+	@Override
+	public void setOwnerEntityId(int id) {
+		this.ownerEntityId = id;
 	}
 	
 	@Override
@@ -37,8 +51,8 @@ public class SpiritStateImp implements SpiritState {
 	}
 
 	@Override
-	public Position getCurrentPosition() {
-		return this.currentPosition;
+	public PhysicsBody getPhysicsBody() {
+		return this.physicsBody;
 	}
 	
 	@Override
@@ -53,14 +67,32 @@ public class SpiritStateImp implements SpiritState {
 	}
 	
 	@Override
-	public boolean needsUpdate() {
-		return needsUpdate;
+	public List<Message> getQueuedMessages() {
+		List<Message> queuedMessages = new ArrayList<>();
+		
+		if (needsInit) {
+			needsInit = false;
+			needsUpdate = false;
+			queuedMessages.add(createSpiritInitMessage());
+		}
+		if (needsUpdate) {
+			needsUpdate = false;
+			queuedMessages.add(createSpiritUpdateMessage());
+		}
+		queuedMessages.addAll(physicsBody.getQueuedMessages(entityId));
+		
+		return queuedMessages;
 	}
-	
-	@Override
-	public SpiritStateUpdate createUpdate() {
-		needsUpdate = false;
-		return new SpiritStateUpdateImp(entityId, team);
+
+	private Message createSpiritInitMessage() {
+		return new SpiritInitMessageImp(
+			entityId,
+			physicsBody.getCurrentPosition(),
+			new SpiritStateUpdateImp(entityId, team));
+	}
+
+	private Message createSpiritUpdateMessage() {
+		return new SpiritStateUpdateMessageImp(new SpiritStateUpdateImp(entityId, team));
 	}
 
 }

@@ -1,7 +1,10 @@
 package everyos.ggd.server.game.vanilla.state.spirit;
 
-import everyos.ggd.server.message.SpiritStateUpdate;
+import java.util.List;
+
+import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
+import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 
 public interface SpiritState {
@@ -10,16 +13,16 @@ public interface SpiritState {
 
 	int getOwnerEntityId();
 	
-	Position getInitialPosition();
+	void setOwnerEntityId(int id);
 	
-	Position getCurrentPosition();
+	PhysicsBody getPhysicsBody();
+	
+	Position getInitialPosition();
 
 	SpiritTeam getTeam();
 	
 	void setTeam(SpiritTeam team);
 
-	boolean needsUpdate();
-
-	SpiritStateUpdate createUpdate();
+	List<Message> getQueuedMessages();
 	
 }

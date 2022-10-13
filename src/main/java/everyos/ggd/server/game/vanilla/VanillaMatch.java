@@ -1,5 +1,6 @@
 package everyos.ggd.server.game.vanilla;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -129,6 +130,13 @@ public class VanillaMatch implements Match {
 		public void broadcast(Message message) {
 			for (Player player: players) {
 				player.onMessageFromServer(message);
+			}
+		}
+		
+		@Override
+		public void broadcastMessages(List<Message> messages) {
+			for (Message message: messages) {
+				matchContext.broadcast(message);
 			}
 		}
 

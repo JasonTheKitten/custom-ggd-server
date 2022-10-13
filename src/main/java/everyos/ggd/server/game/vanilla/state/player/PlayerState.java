@@ -1,22 +1,20 @@
 package everyos.ggd.server.game.vanilla.state.player;
 
+import java.util.List;
+
+import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
 import everyos.ggd.server.message.PlayerStateUpdate;
-import everyos.ggd.server.physics.Position;
-import everyos.ggd.server.physics.Velocity;
+import everyos.ggd.server.physics.PhysicsBody;
 
 public interface PlayerState {
 	
 	int getEntityId();
 
+	PhysicsBody getPhysicsBody();
+	
 	PlayerStats getStats();
 	
-	void setPosition(Position position);
-	
-	Position getPosition();
-	
-	void setVelocity(Velocity velocity);
-	
-	Velocity getVelocity();
+	List<SpiritState> getSpiritList();
 	
 	void gain(SpiritGainReason reason);
 	

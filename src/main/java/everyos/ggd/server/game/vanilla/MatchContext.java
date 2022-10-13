@@ -1,5 +1,7 @@
 package everyos.ggd.server.game.vanilla;
 
+import java.util.List;
+
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
 import everyos.ggd.server.map.MatchMap;
@@ -20,5 +22,7 @@ public interface MatchContext {
 	void broadcast(Message message);
 	
 	void rebroadcast(Message message, int broadcasterId);
+
+	void broadcastMessages(List<Message> messages);
 
 }
