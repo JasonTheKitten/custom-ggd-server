@@ -103,7 +103,7 @@ public final class ServerConfigParser {
 						.setDescription("Set the certificate store")
 						.setAllowDuplicates(false)
 						.build(),
-					Flag.createBuilder("cspass")
+					Flag.createBuilder("csspass")
 						.setID(CSSTORE_PASSWORD_FLAG_ID)
 						.setAlias("csp")
 						.setNumberRequiredArguments(1)
