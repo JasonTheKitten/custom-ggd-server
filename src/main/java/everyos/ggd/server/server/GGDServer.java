@@ -1,20 +1,30 @@
 package everyos.ggd.server.server;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import everyos.api.getopts.ParserFailedException;
 import everyos.ggd.server.event.Event;
 import everyos.ggd.server.game.HumanPlayer;
 import everyos.ggd.server.game.Match;
@@ -50,8 +60,23 @@ public class GGDServer extends WebSocketServer {
 	private final EventEncoder eventEncoder = createEventEncoder();
 	private final EventDecoder eventDecoder = new EventDecoderImp(new MessageDecoderImp());
 	
-	public GGDServer(int port) throws UnknownHostException {
+	public static void main(String[] args) {
+		try {
+			ServerConfig config = ServerConfigParser.parse(args);
+			Optional<SSLContext> sslContext = config
+				.getCSStore()
+				.map(csStore -> loadCSStore(csStore, config.getCSStorePassword().get()));
+			new GGDServer(config.getPortId(), sslContext).start();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (ParserFailedException e) {
+			// This should have already been handled at this point
+		};
+	}
+	
+	public GGDServer(int port, Optional<SSLContext> sslContext) throws UnknownHostException {
 	    super(new InetSocketAddress(port));
+	    sslContext.ifPresent(context -> setWebSocketFactory(new DefaultSSLWebSocketServerFactory(context)));
 	}
 
 	@Override
@@ -154,12 +179,32 @@ public class GGDServer extends WebSocketServer {
 		}, 16, 16);
 	}
 
-	public static void main(String[] args) {
+	private static SSLContext loadCSStore(String csStore, String password) {
+		SSLContext sslContext;
 		try {
-			new GGDServer(8080).start();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		};
+			sslContext = SSLContext.getInstance("TLS");
+			
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			try (InputStream keyStoreInputStream = new FileInputStream(csStore)) {
+				keyStore.load(keyStoreInputStream, password.toCharArray());
+			}
+			
+			KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			keyManagerFactory.init(keyStore, password.toCharArray());
+			
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			trustManagerFactory.init(keyStore);
+			
+			sslContext.init(
+				keyManagerFactory.getKeyManagers(),
+				trustManagerFactory.getTrustManagers(),
+				null);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		return sslContext;
 	}
 	
 }
