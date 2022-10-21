@@ -13,7 +13,7 @@ import org.java_websocket.WebSocketImpl;
 import org.java_websocket.WebSocketServerFactory;
 import org.java_websocket.drafts.Draft;
 
-import tlschannel.ClientTlsChannel;
+import tlschannel.ServerTlsChannel;
 
 public class TLSChannelWebSocketServerFactory implements WebSocketServerFactory {
 	
@@ -25,9 +25,9 @@ public class TLSChannelWebSocketServerFactory implements WebSocketServerFactory 
 
 	@Override
 	public ByteChannel wrapChannel(SocketChannel rawChannel, SelectionKey key) throws IOException {
-		return ClientTlsChannel
+		return new TLSChannelWrapper(ServerTlsChannel
 			.newBuilder(rawChannel, sslContext)
-			.build();
+			.build());
 	}
 	
 	@Override
