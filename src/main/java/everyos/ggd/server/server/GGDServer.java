@@ -49,6 +49,8 @@ import everyos.ggd.server.socket.encoder.imp.SocketEncoderImp;
 
 public class GGDServer extends WebSocketServer {
 	
+	public static final int FRAME_RATE = 6;
+	
 	//TODO: Error handling
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final Map<WebSocket, SocketState> states = new HashMap<>();
@@ -176,7 +178,7 @@ public class GGDServer extends WebSocketServer {
 							conn.send(encodeEvent(oevent)));
 				}
 			}
-		}, 16, 16);
+		}, 1000/FRAME_RATE, 1000/FRAME_RATE);
 	}
 
 	private static SSLContext loadCSStore(String csStore, String password) {

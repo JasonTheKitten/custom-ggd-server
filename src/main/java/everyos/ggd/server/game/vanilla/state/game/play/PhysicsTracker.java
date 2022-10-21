@@ -4,6 +4,7 @@ import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 import everyos.ggd.server.physics.Velocity;
 import everyos.ggd.server.physics.imp.PositionImp;
+import everyos.ggd.server.server.GGDServer;
 
 public class PhysicsTracker {
 
@@ -27,8 +28,8 @@ public class PhysicsTracker {
 		Position initialPosition = physicsBody.getCurrentPosition();
 		Velocity velocity = physicsBody.getCurrentVelocity();
 		Position newPosition = new PositionImp(
-			initialPosition.getX() + velocity.getX()/60,	
-			initialPosition.getY() + velocity.getY()/60);
+			initialPosition.getX() + velocity.getX()/GGDServer.FRAME_RATE,	
+			initialPosition.getY() + velocity.getY()/GGDServer.FRAME_RATE);
 		physicsBody.setCurrentPosition(newPosition);
 	}
 	
