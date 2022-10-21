@@ -36,6 +36,7 @@ import everyos.ggd.server.server.event.imp.EventEncoderImp;
 import everyos.ggd.server.server.message.MessageEncoder;
 import everyos.ggd.server.server.message.imp.MessageDecoderImp;
 import everyos.ggd.server.server.message.imp.MessageEncoderImp;
+import everyos.ggd.server.server.misc.TLSChannelWebSocketServerFactory;
 import everyos.ggd.server.server.state.MatchMakerSocketState;
 import everyos.ggd.server.server.state.MatchSocketState;
 import everyos.ggd.server.server.state.SocketState;
@@ -81,7 +82,7 @@ public class GGDServer extends WebSocketServer {
 	
 	public GGDServer(int port, Optional<SSLContext> sslContext) throws UnknownHostException {
 	    super(new InetSocketAddress(port));
-	    sslContext.ifPresent(context -> setWebSocketFactory(new DefaultSSLWebSocketServerFactory(context)));
+	    sslContext.ifPresent(context -> setWebSocketFactory(new TLSChannelWebSocketServerFactory(context)));
 	}
 
 	@Override
