@@ -55,6 +55,7 @@ public class PlayerStateImp implements PlayerState {
 		PlayerStateUpdateBuilder updateBuilder = PlayerStateUpdateBuilder.clone(update)
 			.setNumSpiritsHeld(spiritList.size());
 		switch (reason) {
+		case STEAL_SPIRIT:
 		case GOAL_RETURN:
 			updateBuilder
 				.setAnimation(Animation.SPIRITS_COLLECTED, amount)

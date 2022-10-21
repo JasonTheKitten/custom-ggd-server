@@ -101,27 +101,34 @@ public class SpiritTracker {
 	private void handlePlayerCollisions(int playerEntityId, Position playerPosition) {
 		for (SpiritState spiritState: spiritStates) {
 			if (spiritState.getOwnerEntityId() != -1 && playerInRangeOfOtherTeamSpirit(playerEntityId, playerPosition, spiritState)) {
-				setTrailColor(playerEntityId, spiritState);
+				int stolenSpiritCount = setTrailColor(playerEntityId, spiritState);
+				playerStates[playerEntityId].gain(stolenSpiritCount, SpiritGainReason.STEAL_SPIRIT);
 			}
 		}
 	}
 	
-	private void setTrailColor(int playerEntityId, SpiritState spiritState) {
+	private int setTrailColor(int playerEntityId, SpiritState spiritState) {
+		
 		List<SpiritState> playerTrail = playerStates[playerEntityId]
 				.getSpiritList();
 		List<SpiritState> enemyTrail = playerStates[spiritState.getOwnerEntityId()]
 			.getSpiritList();
 		int enemySpiritIndex = enemyTrail.indexOf(spiritState);
 		if (enemySpiritIndex == -1) {
-			return;
+			return 0;
 		}
+		
+		int stolenSpiritCount = 0;
 		SpiritTeam newTeam = getSpiritTeam(playerEntityId);
 		while (enemyTrail.size() > enemySpiritIndex) {
 			SpiritState state = enemyTrail.remove(enemySpiritIndex);
 			playerTrail.add(state);
 			state.setTeam(newTeam);
 			state.setOwnerEntityId(playerEntityId);
+			stolenSpiritCount++;
 		}
+		
+		return stolenSpiritCount;
 	}
 
 	private boolean playerInRangeOfOtherTeamSpirit(int playerEntityId, Position playerPosition, SpiritState spiritState) {
