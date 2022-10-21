@@ -13,6 +13,7 @@ public final class ServerConfigParser {
 	private static final int PORT_FLAG_ID = 1;
 	private static final int CSSTORE_FLAG_ID = 2;
 	private static final int CSSTORE_PASSWORD_FLAG_ID = 3;
+	private static final int VERBOSE_FLAG_ID = 4;
 	
 	private ServerConfigParser() {}
 
@@ -25,6 +26,7 @@ public final class ServerConfigParser {
 		int portId = getPortId(arguments);
 		Optional<String> csStore = getCSStore(arguments);
 		Optional<String> csStorePassword = getCSStorePassword(arguments);
+		boolean verbose = getVerbose(arguments);
 			
 		return new ServerConfig() {
 			
@@ -41,6 +43,11 @@ public final class ServerConfigParser {
 			@Override
 			public Optional<String> getCSStorePassword() {
 				return csStorePassword;
+			}
+			
+			@Override
+			public boolean isVerbose() {
+				return verbose;
 			}
 			
 		};
@@ -85,6 +92,10 @@ public final class ServerConfigParser {
 		
 		return Optional.empty();
 	}
+	
+	private static boolean getVerbose(FlagArgumentPairCollection arguments) throws ParserFailedException {
+		return arguments.get(VERBOSE_FLAG_ID).length > 0;
+	}
 
 	private static ArgumentParser createParser() {
 		return ArgumentParser.createBuilder()
@@ -114,6 +125,11 @@ public final class ServerConfigParser {
 						.setID(HELP_FLAG_ID)
 						.setAlias("h")
 						.setDescription("Display this screen")
+						.build(),
+					Flag.createBuilder("verbose")
+						.setID(VERBOSE_FLAG_ID)
+						.setAlias("v")
+						.setDescription("Enable verbose mode")
 						.build()
 				)
 				.setAllowLooseArguments(false)

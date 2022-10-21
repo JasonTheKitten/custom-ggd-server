@@ -65,6 +65,9 @@ public class GGDServer extends WebSocketServer {
 	public static void main(String[] args) {
 		try {
 			ServerConfig config = ServerConfigParser.parse(args);
+			if (config.isVerbose()) {
+				System.setProperty("logging.level", config.isVerbose() ? "TRACE" : "INFO");
+			}
 			Optional<SSLContext> sslContext = config
 				.getCSStore()
 				.map(csStore -> loadCSStore(csStore, config.getCSStorePassword().get()));

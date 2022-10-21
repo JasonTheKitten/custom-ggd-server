@@ -13,7 +13,7 @@ public class MatchMakerSocketState implements SocketState {
 	
 	private final MatchMaker matchMaker;
 	
-	static boolean b = false;
+	private static int playersConnected = 0;
 
 	public MatchMakerSocketState(MatchMaker matchMaker) {
 		this.matchMaker = matchMaker;
@@ -39,10 +39,9 @@ public class MatchMakerSocketState implements SocketState {
 		sendMatchURL(sessionData, out);
 		
 		//TODO: Start at proper time
-		if (b) {
+		if (++playersConnected == 2) {
 			matchMaker.fulfillCurrentMatch();
 		}
-		b=!b;
 	}
 
 	private void sendMatchURL(SessionData sessionData, Consumer<Event> out) {

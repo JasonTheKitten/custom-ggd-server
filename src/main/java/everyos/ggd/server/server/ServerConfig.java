@@ -10,4 +10,6 @@ public interface ServerConfig {
 
 	Optional<String> getCSStorePassword();
 
+	boolean isVerbose();
+
 }

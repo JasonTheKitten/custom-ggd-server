@@ -7,7 +7,6 @@ import java.util.TimerTask;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
-import everyos.ggd.server.game.vanilla.state.game.MatchFinishedGameState;
 import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
 import everyos.ggd.server.map.MapLoader;
 import everyos.ggd.server.map.MatchMap;
