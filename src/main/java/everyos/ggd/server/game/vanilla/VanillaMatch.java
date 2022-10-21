@@ -11,10 +11,11 @@ import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.map.MapLoader;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.server.GGDServer;
 
 public class VanillaMatch implements Match {
 	
-	private static final int FRAME_DELAY = 16;
+	private static final int FRAME_DELAY = 1000/GGDServer.FRAME_RATE;
 	
 	private static final String[] AVAILABLE_MAPS = new String[] {
 		"map01"/*, "map02", "map03", "map04"*/
