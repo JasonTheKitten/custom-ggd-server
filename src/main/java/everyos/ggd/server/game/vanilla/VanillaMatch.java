@@ -1,21 +1,18 @@
 package everyos.ggd.server.game.vanilla;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import everyos.ggd.server.common.TickTimer;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
+import everyos.ggd.server.game.vanilla.state.game.MatchFinishedGameState;
 import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
 import everyos.ggd.server.map.MapLoader;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
-import everyos.ggd.server.server.GGDServer;
 
 public class VanillaMatch implements Match {
-	
-	private static final int FRAME_DELAY = 1000/GGDServer.FRAME_RATE;
 	
 	private static final String[] AVAILABLE_MAPS = new String[] {
 		"map01"/*, "map02", "map03", "map04"*/
@@ -26,12 +23,14 @@ public class VanillaMatch implements Match {
 	private final MatchContext matchContext = new MatchContextImp();
 	private final String mapName = chooseMap();
 	private final MatchMap map = MapLoader.loadFromResourceByName(mapName);
-	private final Timer tickTimer = new Timer();
+	private final TickTimer tickTimer;
 	
 	private GameState gameState = new MatchSetupGameState(matchContext);
+	private Runnable tickCancelFunc;
 
-	public VanillaMatch(int id) {
+	public VanillaMatch(int id, TickTimer tickTimer) {
 		this.id = id;
+		this.tickTimer = tickTimer;
 	}
 
 	@Override
@@ -85,14 +84,7 @@ public class VanillaMatch implements Match {
 	}
 	
 	private void startPing() {
-		tickTimer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				ping();
-			}
-			
-		}, FRAME_DELAY, FRAME_DELAY);
+		tickCancelFunc = tickTimer.addTickTask(() -> ping());
 	}
 
 	private void ping() {
@@ -110,9 +102,9 @@ public class VanillaMatch implements Match {
 		public void setGameState(GameState newGameState) {
 			gameState = newGameState;
 			gameState.start();
-			/*if (gameState instanceof MatchFinishedGameState) {
-				tickTimer.cancel();
-			}*/
+			if (gameState instanceof MatchFinishedGameState) {
+				tickCancelFunc.run();
+			}
 		}
 		
 		@Override

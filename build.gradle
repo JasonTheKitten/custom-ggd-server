@@ -21,7 +21,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-mainClassName = 'everyos.ggd.server.server.GGDServer'
+mainClassName = 'everyos.ggd.server.server.EntryPoint'
 
 jar {
 	manifest {

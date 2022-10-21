@@ -4,11 +4,12 @@ import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 import everyos.ggd.server.physics.Velocity;
 import everyos.ggd.server.physics.imp.PositionImp;
-import everyos.ggd.server.server.GGDServer;
 
 public class PhysicsTracker {
 
-	private PhysicsBodiesView physicsBodies;
+	private final PhysicsBodiesView physicsBodies;
+	
+	private long lastPoll = System.currentTimeMillis();
 
 	public PhysicsTracker(PhysicsBodiesView physicsBodies) {
 		this.physicsBodies = physicsBodies;
@@ -19,17 +20,20 @@ public class PhysicsTracker {
 	}
 	
 	private void updatePhysicsPositions() {
+		int timeElapsed = (int) (System.currentTimeMillis() - lastPoll);
+		lastPoll = System.currentTimeMillis();
+		
 		for (int i = 0; i < physicsBodies.getLength(); i++) {
-			updatePhysicsPosition(physicsBodies.get(i));
+			updatePhysicsPosition(physicsBodies.get(i), timeElapsed);
 		}
 	}
 	
-	private void updatePhysicsPosition(PhysicsBody physicsBody) {
+	private void updatePhysicsPosition(PhysicsBody physicsBody, int timeElapsed) {
 		Position initialPosition = physicsBody.getCurrentPosition();
 		Velocity velocity = physicsBody.getCurrentVelocity();
 		Position newPosition = new PositionImp(
-			initialPosition.getX() + velocity.getX()/GGDServer.FRAME_RATE,	
-			initialPosition.getY() + velocity.getY()/GGDServer.FRAME_RATE);
+			initialPosition.getX() + velocity.getX()/1000*timeElapsed,	
+			initialPosition.getY() + velocity.getY()/1000*timeElapsed);
 		physicsBody.setCurrentPosition(newPosition);
 	}
 	

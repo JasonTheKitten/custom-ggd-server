@@ -1,4 +1,4 @@
-package everyos.ggd.server.server;
+package everyos.ggd.server.server.config;
 
 import java.util.Optional;
 

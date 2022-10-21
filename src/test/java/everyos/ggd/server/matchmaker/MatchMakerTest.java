@@ -5,8 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import everyos.ggd.server.common.imp.TickTimerImp;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
+import everyos.ggd.server.game.vanilla.VanillaMatch;
 import everyos.ggd.server.session.SessionData;
 import everyos.ggd.server.session.SessionManager;
 
@@ -18,7 +20,8 @@ public class MatchMakerTest {
 	@BeforeEach
 	private void beforeEach() {
 		sessionManager = new SessionManager();
-		matchMaker = new MatchMaker(sessionManager);
+		//TODO: Mock the match
+		matchMaker = new MatchMaker(sessionManager, id -> new VanillaMatch(id, new TickTimerImp(60)));
 	}
 
 	@Test

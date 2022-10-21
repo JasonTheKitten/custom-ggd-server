@@ -15,6 +15,7 @@ public class MessagingPhysicsBody implements PhysicsBody {
 
 	private Position position;
 	private Velocity velocity;
+	private Velocity lastVelocity;
 	private ChangeLevel changeLevel;
 	
 	public MessagingPhysicsBody() {
@@ -32,6 +33,11 @@ public class MessagingPhysicsBody implements PhysicsBody {
 		this.position = position;
 		changeLevel = ChangeLevel.TELEPORT;
 	}
+	
+	@Override
+	public void recordCurrentPosition(Position position) {
+		this.position = position;
+	}
 
 	@Override
 	public Velocity getCurrentVelocity() {
@@ -42,6 +48,16 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	public void setCurrentVelocity(Velocity velocity) {
 		this.velocity = velocity;
 		changeLevel = ChangeLevel.MOVE;
+	}
+	
+	@Override
+	public Velocity getLastVelocity() {
+		return this.lastVelocity;
+	}
+
+	@Override
+	public void storeLastVelocity() {
+		this.lastVelocity = this.velocity;
 	}
 	
 	public List<Message> getQueuedMessages(int entityId) {
@@ -58,6 +74,7 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	public void reset() {
 		position = new PositionImp(0, 0);
 		velocity = new VelocityImp(0, 0);
+		lastVelocity = velocity;
 		changeLevel = ChangeLevel.TELEPORT;
 	}
 	

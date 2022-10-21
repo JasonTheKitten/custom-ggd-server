@@ -6,8 +6,14 @@ public interface PhysicsBody {
 	
 	void setCurrentPosition(Position position);
 	
+	void recordCurrentPosition(Position position);
+	
 	Velocity getCurrentVelocity();
 	
 	void setCurrentVelocity(Velocity velocity);
+	
+	Velocity getLastVelocity();
+	
+	void storeLastVelocity();
 	
 }

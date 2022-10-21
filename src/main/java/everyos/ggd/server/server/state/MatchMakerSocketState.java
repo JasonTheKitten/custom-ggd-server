@@ -41,6 +41,7 @@ public class MatchMakerSocketState implements SocketState {
 		//TODO: Start at proper time
 		if (++playersConnected == 2) {
 			matchMaker.fulfillCurrentMatch();
+			playersConnected = 0;
 		}
 	}
 

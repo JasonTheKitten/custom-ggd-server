@@ -1,22 +1,25 @@
 package everyos.ggd.server.matchmaker;
 
+import java.util.function.Function;
+
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.imp.HumanPlayerImp;
-import everyos.ggd.server.game.vanilla.VanillaMatch;
 import everyos.ggd.server.session.SessionData;
 import everyos.ggd.server.session.SessionManager;
 
 public class MatchMaker {
 	
 	private final SessionManager sessionManager;
+	private final Function<Integer, Match> matchGenerator;
 	
 	private Match currentMatch;
 	private int nextMatchId = 0;
 	private int nextPlayerId = 0;
 
-	public MatchMaker(SessionManager sessionManager) {
+	public MatchMaker(SessionManager sessionManager, Function<Integer, Match> matchGenerator) {
 		this.sessionManager = sessionManager;
+		this.matchGenerator = matchGenerator;
 		this.currentMatch = createNewMatch();
 	}
 
@@ -57,7 +60,7 @@ public class MatchMaker {
 
 	private Match createNewMatch() {
 		int matchId = nextMatchId++;
-		Match match = new VanillaMatch(matchId);
+		Match match = matchGenerator.apply(matchId);
 		sessionManager.registerMatch(match);
 		
 		return match;
