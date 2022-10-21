@@ -107,4 +107,11 @@ public class PlayerStateImp implements PlayerState {
 			.build();
 	}
 
+	public void performTemporarayCreditScreenPatch() {
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setNumSpiritsHeld(stats.getScore())
+			.build();
+		needsUpdate = true;
+	}
+
 }

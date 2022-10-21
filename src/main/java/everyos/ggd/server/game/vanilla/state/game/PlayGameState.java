@@ -12,6 +12,7 @@ import everyos.ggd.server.game.vanilla.state.game.play.PhysicsTracker;
 import everyos.ggd.server.game.vanilla.state.game.play.PlayerSpiritPhysicsBodiesView;
 import everyos.ggd.server.game.vanilla.state.game.play.SpiritTracker;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
+import everyos.ggd.server.game.vanilla.state.player.PlayerStateImp;
 import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
 import everyos.ggd.server.game.vanilla.util.ScoreUtil;
@@ -53,6 +54,7 @@ public class PlayGameState implements GameState {
 	@Override
 	public void ping() {
 		if (timer.finished()) {
+			executeTemporaryCreditScreenPatch();
 			matchContext.setGameState(new MatchFinishedGameState(matchContext, getPlayerStats()));
 			return;
 		}
@@ -65,6 +67,13 @@ public class PlayGameState implements GameState {
 		
 		if (timer.changed()) {
 			sendMatchUpdate();
+		}
+	}
+
+	private void executeTemporaryCreditScreenPatch() {
+		for (PlayerState playerState: playerStates) {
+			((PlayerStateImp) playerState).performTemporarayCreditScreenPatch();
+			matchContext.broadcastMessages(playerState.getQueuedMessages());
 		}
 	}
 

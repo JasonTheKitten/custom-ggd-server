@@ -111,9 +111,9 @@ public class VanillaMatch implements Match {
 		public void setGameState(GameState newGameState) {
 			gameState = newGameState;
 			gameState.start();
-			if (gameState instanceof MatchFinishedGameState) {
+			/*if (gameState instanceof MatchFinishedGameState) {
 				tickTimer.cancel();
-			}
+			}*/
 		}
 		
 		@Override
