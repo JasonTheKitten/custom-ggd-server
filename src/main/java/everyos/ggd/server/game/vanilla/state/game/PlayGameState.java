@@ -57,7 +57,6 @@ public class PlayGameState implements GameState {
 		playerMessageProcessor.tick();
 		processPlayerStateUpdates();
 		spiritTracker.tick();
-		playerMessageProcessor.tick2();
 		matchStateTracker.tick();
 	}
 	

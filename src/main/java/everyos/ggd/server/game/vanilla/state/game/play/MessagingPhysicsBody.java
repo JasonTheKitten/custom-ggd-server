@@ -16,11 +16,10 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	private Position position;
 	private Velocity velocity;
 	private Velocity lastVelocity;
-	private ChangeLevel changeLevel;
+	private PhysicsChangeLevel changeLevel;
 	
 	public MessagingPhysicsBody() {
 		reset();
-		changeLevel = ChangeLevel.NONE;
 	}
 	
 	@Override
@@ -31,7 +30,7 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	@Override
 	public void setCurrentPosition(Position position) {
 		this.position = position;
-		changeLevel = ChangeLevel.TELEPORT;
+		changeLevel = PhysicsChangeLevel.TELEPORT;
 	}
 	
 	@Override
@@ -47,7 +46,9 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	@Override
 	public void setCurrentVelocity(Velocity velocity) {
 		this.velocity = velocity;
-		changeLevel = ChangeLevel.MOVE;
+		if (changeLevel != PhysicsChangeLevel.TELEPORT) {
+			changeLevel = PhysicsChangeLevel.MOVE;
+		}
 	}
 	
 	@Override
@@ -61,7 +62,9 @@ public class MessagingPhysicsBody implements PhysicsBody {
 	}
 	
 	public List<Message> getQueuedMessages(int entityId) {
-		switch (changeLevel) {
+		PhysicsChangeLevel oldPhysicsChangeLevel = changeLevel;
+		changeLevel = PhysicsChangeLevel.NONE;
+		switch (oldPhysicsChangeLevel) {
 		case MOVE:
 			return List.of(new EntityMoveMessageImp(entityId, velocity, true));
 		case TELEPORT:
@@ -75,11 +78,7 @@ public class MessagingPhysicsBody implements PhysicsBody {
 		position = new PositionImp(0, 0);
 		velocity = new VelocityImp(0, 0);
 		lastVelocity = velocity;
-		changeLevel = ChangeLevel.TELEPORT;
-	}
-	
-	private enum ChangeLevel {
-		NONE, MOVE, TELEPORT
+		changeLevel = PhysicsChangeLevel.TELEPORT;
 	}
 
 }

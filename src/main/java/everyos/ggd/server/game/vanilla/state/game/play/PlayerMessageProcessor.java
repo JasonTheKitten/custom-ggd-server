@@ -20,7 +20,8 @@ public class PlayerMessageProcessor {
 	private final MatchContext matchContext;
 	private final PlayerState[] playerStates;
 	private final BiConsumer<Integer, Position> playerPositionUpdateHandler;
-
+	
+	
 	public PlayerMessageProcessor(MatchContext matchContext, PlayerState[] playerStates, BiConsumer<Integer, Position> playerPositionUpdateHandler) {
 		this.matchContext = matchContext;
 		this.playerStates = playerStates;
@@ -29,9 +30,6 @@ public class PlayerMessageProcessor {
 	
 	public void tick() {
 		processPlayerMessages();
-	}
-	
-	public void tick2() {
 		processPlayerPositions();
 	}
 
