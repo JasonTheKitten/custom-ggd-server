@@ -7,9 +7,10 @@ import java.util.TimerTask;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
+import everyos.ggd.server.game.vanilla.state.game.MatchFinishedGameState;
 import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
-import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.map.MapLoader;
+import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.server.GGDServer;
 
@@ -26,6 +27,7 @@ public class VanillaMatch implements Match {
 	private final MatchContext matchContext = new MatchContextImp();
 	private final String mapName = chooseMap();
 	private final MatchMap map = MapLoader.loadFromResourceByName(mapName);
+	private final Timer tickTimer = new Timer();
 	
 	private GameState gameState = new MatchSetupGameState(matchContext);
 
@@ -84,8 +86,7 @@ public class VanillaMatch implements Match {
 	}
 	
 	private void startPing() {
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
+		tickTimer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -110,6 +111,9 @@ public class VanillaMatch implements Match {
 		public void setGameState(GameState newGameState) {
 			gameState = newGameState;
 			gameState.start();
+			if (gameState instanceof MatchFinishedGameState) {
+				tickTimer.cancel();
+			}
 		}
 		
 		@Override

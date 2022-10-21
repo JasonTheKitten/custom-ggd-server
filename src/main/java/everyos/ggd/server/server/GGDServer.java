@@ -49,7 +49,7 @@ import everyos.ggd.server.socket.encoder.imp.SocketEncoderImp;
 
 public class GGDServer extends WebSocketServer {
 	
-	public static final int FRAME_RATE = 20;
+	public static final int FRAME_RATE = 60;
 	
 	//TODO: Error handling
 	private final Logger logger = LoggerFactory.getLogger(getClass());

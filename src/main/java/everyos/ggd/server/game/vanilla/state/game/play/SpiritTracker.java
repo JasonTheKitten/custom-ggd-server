@@ -38,6 +38,7 @@ public class SpiritTracker {
 		givePlayerNearbySpirits(playerEntityId, playerPosition);
 		spiritTrail.handlePlayerPositionUpdate(playerStates[playerEntityId], playerPosition);
 		handleBaseCollision(playerEntityId, playerPosition);
+		handlePlayerCollisions(playerEntityId, playerPosition);
 	}
 
 	private void givePlayerNearbySpirits(int playerEntityId, Position playerPosition) {
@@ -95,6 +96,40 @@ public class SpiritTracker {
 			state.reset();
 		}
 		spiritStates.clear();
+	}
+	
+	private void handlePlayerCollisions(int playerEntityId, Position playerPosition) {
+		for (SpiritState spiritState: spiritStates) {
+			if (spiritState.getOwnerEntityId() != -1 && playerInRangeOfOtherTeamSpirit(playerEntityId, playerPosition, spiritState)) {
+				setTrailColor(playerEntityId, spiritState);
+			}
+		}
+	}
+	
+	private void setTrailColor(int playerEntityId, SpiritState spiritState) {
+		List<SpiritState> playerTrail = playerStates[playerEntityId]
+				.getSpiritList();
+		List<SpiritState> enemyTrail = playerStates[spiritState.getOwnerEntityId()]
+			.getSpiritList();
+		int enemySpiritIndex = enemyTrail.indexOf(spiritState);
+		if (enemySpiritIndex == -1) {
+			return;
+		}
+		SpiritTeam newTeam = getSpiritTeam(playerEntityId);
+		while (enemyTrail.size() > enemySpiritIndex) {
+			SpiritState state = enemyTrail.remove(enemySpiritIndex);
+			playerTrail.add(state);
+			state.setTeam(newTeam);
+			state.setOwnerEntityId(playerEntityId);
+		}
+	}
+
+	private boolean playerInRangeOfOtherTeamSpirit(int playerEntityId, Position playerPosition, SpiritState spiritState) {
+		if (getSpiritTeam(playerEntityId) == getSpiritTeam(spiritState.getOwnerEntityId())) {
+			return false;
+		}
+		Position spiritPosition = spiritState.getPhysicsBody().getCurrentPosition();
+		return MathUtil.getDistanceBetweenPositions(playerPosition, spiritPosition) <= 1f;
 	}
 	
 }
