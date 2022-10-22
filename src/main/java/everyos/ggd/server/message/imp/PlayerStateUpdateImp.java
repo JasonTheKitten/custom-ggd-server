@@ -6,20 +6,26 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 
 	private final int entityId;
 	private final float speed;
+	private final int glowRadius;
 	private final int spiritsHeld;
 	private final boolean connected;
 	private final Animation animation;
 	private final int animationAmount;
 	private final Emotion emotion;
+	private final UpgradeData upgradeData;
+	private final Upgrade upgrade;
 
 	public PlayerStateUpdateImp(PlayerStateUpdateBuilder builder) {
 		this.entityId = builder.getEntityId();
 		this.speed = builder.getSpeed();
+		this.glowRadius = builder.getGlowRadius();
 		this.spiritsHeld = builder.getNumSpiritsHeld();
 		this.connected = builder.getConnected();
 		this.animation = builder.getAnimation();
 		this.animationAmount = builder.getAnimationAmount();
 		this.emotion = builder.getEmotion();
+		this.upgradeData = builder.getUpgradeData();
+		this.upgrade = builder.getUpgrade();
 	}
 	
 	@Override
@@ -34,10 +40,9 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 
 	@Override
 	public int getGlowRadius() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.glowRadius;
 	}
-
+	
 	@Override
 	public int getNumSpiritsHeld() {
 		return this.spiritsHeld;
@@ -61,6 +66,16 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	@Override
 	public Emotion getEmotion() {
 		return this.emotion;
+	}
+
+	@Override
+	public UpgradeData getUpgradeData() {
+		return this.upgradeData;
+	}
+
+	@Override
+	public Upgrade getUpgrade() {
+		return this.upgrade;
 	}
 
 }

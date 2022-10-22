@@ -18,6 +18,10 @@ public interface PlayerStateUpdate {
 	
 	Emotion getEmotion();
 	
+	UpgradeData getUpgradeData();
+	
+	Upgrade getUpgrade();
+	
 	public static enum Animation {
 		NONE,
 		UNKNOWN,
@@ -28,6 +32,14 @@ public interface PlayerStateUpdate {
 	
 	public static enum Emotion {
 		NONE, HAPPY, SAD
+	}
+	
+	public static enum UpgradeData {
+		NONE, RETURN_TO_BASE, ACHIEVED
+	}
+	
+	public static enum Upgrade {
+		NONE, SPEED_UPGRADE, LIGHT_UPGRADE, MAGNET_UPGRADE, TRANSPARENT
 	}
 	
 }

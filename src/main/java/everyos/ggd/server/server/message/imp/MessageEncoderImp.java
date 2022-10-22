@@ -9,6 +9,7 @@ import everyos.ggd.server.message.MatchStateUpdateMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
 import everyos.ggd.server.message.PlayerStateUpdateMessage;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
@@ -282,16 +283,26 @@ public class MessageEncoderImp implements MessageEncoder {
 		SocketArray emotionData = createSocketArray();
 		emotionData.set(0, stateUpdate.getEmotion().ordinal());
 		
+		SocketArray upgradeData = createSocketArray();
+		upgradeData.set(0, stateUpdate.getUpgradeData().ordinal());
+		upgradeData.set(1, stateUpdate.getUpgrade().ordinal());
+		
 		SocketArray animationData = createSocketArray();
 		animationData.set(0, stateUpdate.getAnimation().ordinal());
 		animationData.set(1, stateUpdate.getAnimationAmount());
 		
 		SocketArray updateData = createSocketArray();
 		updateData.set(1, stateUpdate.getSpeed());
+		updateData.set(2, stateUpdate.getGlowRadius());
 		updateData.set(5, stateUpdate.getNumSpiritsHeld());
 		updateData.set(7, stateUpdate.isConnected());
+		updateData.set(12, upgradeData);
 		updateData.set(13, animationData);
 		updateData.set(14, emotionData);
+		
+		if (stateUpdate.getUpgradeData() == UpgradeData.ACHIEVED) {
+			updateData.set(3, stateUpdate.getUpgrade().ordinal());
+		}
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, stateUpdate.getEntityId() + 1);

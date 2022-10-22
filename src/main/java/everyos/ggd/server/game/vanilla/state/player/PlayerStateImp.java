@@ -9,6 +9,8 @@ import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.PlayerStateUpdate.Animation;
 import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
+import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.PlayerStateUpdateMessageImp;
@@ -20,13 +22,17 @@ public class PlayerStateImp implements PlayerState {
 	private final List<SpiritState> spiritList = new ArrayList<>();
 	private final PhysicsBody physicsBody = new MessagingPhysicsBody();
 	private final int entityId;
+	private final PlayerStateEventListener listener;
 	
 	private boolean needsUpdate = true;
 	private PlayerStateUpdate update;
+
+	private Upgrade upgradeLevel = Upgrade.NONE;
 	
-	public PlayerStateImp(int entityId) {
+	public PlayerStateImp(int entityId, PlayerStateEventListener listener) {
 		this.entityId = entityId;
 		this.update = createInitialUpdate();
+		this.listener = listener;
 	}
 	
 	@Override
@@ -48,6 +54,44 @@ public class PlayerStateImp implements PlayerState {
 	public List<SpiritState> getSpiritList() {
 		return this.spiritList;
 	}
+	
+	@Override
+	public Upgrade getUpgradeLevel() {
+		return this.upgradeLevel;
+	}
+
+	@Override
+	public void setUpgradeLevel(Upgrade upgrade) {
+		this.upgradeLevel = upgrade;
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setUpgrade(UpgradeData.ACHIEVED, upgrade)
+			.build();
+	}
+	
+	@Override
+	public void setUpgradeHint(Upgrade upgrade) {
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setUpgrade(UpgradeData.RETURN_TO_BASE, upgrade)
+			.build();
+	}
+	
+	@Override
+	public void setSpeed(float speed) {
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setSpeed(speed)
+			.build();
+	}
+	
+	@Override
+	public void setLight(int glowRadius) {
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setGlowRadius(glowRadius)
+			.build();
+	}
 
 	@Override
 	public void gain(int amount, SpiritGainReason reason) {
@@ -65,6 +109,8 @@ public class PlayerStateImp implements PlayerState {
 			break;
 		}
 		update = updateBuilder.build();
+		
+		listener.onGain(this, amount, reason);
 	}
 	
 	@Override
@@ -90,6 +136,7 @@ public class PlayerStateImp implements PlayerState {
 		update = PlayerStateUpdateBuilder.clone(update)
 			.setAnimation(Animation.NONE, 0)
 			.setEmotion(Emotion.NONE)
+			.setUpgrade(UpgradeData.NONE, Upgrade.NONE)
 			.build();
 		
 		return message;
@@ -100,10 +147,12 @@ public class PlayerStateImp implements PlayerState {
 		return new PlayerStateUpdateBuilder()
 			.setEntityId(entityId)
 			.setSpeed(15f)
+			.setGlowRadius(5)
 			.setNumSpiritsHeld(spiritList.size())
 			.setConnected(true)
 			.setAnimation(Animation.NONE, 0)
 			.setEmotion(Emotion.NONE)
+			.setUpgrade(UpgradeData.NONE, Upgrade.NONE)
 			.build();
 	}
 

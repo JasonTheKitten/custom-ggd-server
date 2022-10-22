@@ -11,6 +11,7 @@ import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.game.vanilla.util.MathUtil;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.map.Tile;
+import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.Position;
@@ -63,9 +64,10 @@ public class SpiritTracker {
 	}
 
 	private boolean playerInRangeOfSpirit(int playerEntityId, Position playerPosition, SpiritState spiritState) {
-		//TODO: Magnetism
 		Position spiritPosition = spiritState.getPhysicsBody().getCurrentPosition();
-		return MathUtil.getDistanceBetweenPositions(playerPosition, spiritPosition) <= 3f;
+		boolean hasMagnetismUpgrade = playerStates[playerEntityId].getUpgradeLevel().ordinal() >= Upgrade.MAGNET_UPGRADE.ordinal();
+		float collectionRadius = hasMagnetismUpgrade ? 6f : 3f;
+		return MathUtil.getDistanceBetweenPositions(playerPosition, spiritPosition) <= collectionRadius;
 	}
 	
 	private void handleBaseCollision(int playerEntityId, Position playerPosition) {

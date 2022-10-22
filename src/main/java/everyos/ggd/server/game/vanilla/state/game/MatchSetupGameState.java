@@ -5,6 +5,7 @@ import java.util.List;
 
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
+import everyos.ggd.server.game.vanilla.state.game.play.PlayerStateEventListenerImp;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
 import everyos.ggd.server.game.vanilla.state.player.PlayerStateImp;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
@@ -52,7 +53,7 @@ public class MatchSetupGameState implements GameState {
 		for (int i = 0; i < players.length; i++) {
 			Player player = players[i];
 			player.onMessageFromServer(matchInitMessage);
-			PlayerState playerState = new PlayerStateImp(i);
+			PlayerState playerState = new PlayerStateImp(i, new PlayerStateEventListenerImp());
 			playerStates[i] = playerState;
 			playerState.getPhysicsBody().setCurrentPosition(getPlayerStartPosition(matchContext.getMap(), i));
 			Message initialPlayerStateMessage = playerState.createInitMessage(player.isBot());
