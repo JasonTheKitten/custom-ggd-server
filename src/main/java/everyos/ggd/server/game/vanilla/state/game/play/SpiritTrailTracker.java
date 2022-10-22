@@ -11,7 +11,7 @@ import everyos.ggd.server.physics.Velocity;
 import everyos.ggd.server.physics.imp.PositionImp;
 import everyos.ggd.server.physics.imp.VelocityImp;
 
-public class SpiritTrail {
+public class SpiritTrailTracker {
 	
 	public void handlePlayerPositionUpdate(PlayerState playerState, Position playerPosition) {
 		List<SpiritState> spiritTrail = playerState.getSpiritList();

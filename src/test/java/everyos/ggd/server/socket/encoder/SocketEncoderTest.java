@@ -33,7 +33,7 @@ public class SocketEncoderTest {
 	}
 	
 	@Test
-	@DisplayName("Can encode simple number")
+	@DisplayName("Can encode negative number")
 	public void canEncodeNegativeNumber() {
 		byte[] encoded = encoder.encodeNumber(-1);
 		Assertions.assertArrayEquals(new byte[] {

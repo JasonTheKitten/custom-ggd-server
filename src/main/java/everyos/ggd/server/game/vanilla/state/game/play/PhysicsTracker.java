@@ -1,5 +1,7 @@
 package everyos.ggd.server.game.vanilla.state.game.play;
 
+import everyos.ggd.server.game.vanilla.MatchContext;
+import everyos.ggd.server.game.vanilla.state.entity.Entity;
 import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 import everyos.ggd.server.physics.Velocity;
@@ -7,12 +9,12 @@ import everyos.ggd.server.physics.imp.PositionImp;
 
 public class PhysicsTracker {
 
-	private final PhysicsBodiesView physicsBodies;
+	private final MatchContext matchContext;
 	
 	private long lastPoll = System.currentTimeMillis();
 
-	public PhysicsTracker(PhysicsBodiesView physicsBodies) {
-		this.physicsBodies = physicsBodies;
+	public PhysicsTracker(MatchContext matchContext) {
+		this.matchContext = matchContext;
 	}
 	
 	public void tick() {
@@ -23,8 +25,8 @@ public class PhysicsTracker {
 		int timeElapsed = (int) (System.currentTimeMillis() - lastPoll);
 		lastPoll = System.currentTimeMillis();
 		
-		for (int i = 0; i < physicsBodies.getLength(); i++) {
-			updatePhysicsPosition(physicsBodies.get(i), timeElapsed);
+		for (Entity entity: matchContext.getEntityRegister().getAllEntities()) {
+			updatePhysicsPosition(entity.getPhysicsBody(), timeElapsed);
 		}
 	}
 	
@@ -35,14 +37,6 @@ public class PhysicsTracker {
 			initialPosition.getX() + velocity.getX()/1000*timeElapsed,	
 			initialPosition.getY() + velocity.getY()/1000*timeElapsed);
 		physicsBody.setCurrentPosition(newPosition);
-	}
-	
-	public static interface PhysicsBodiesView {
-		
-		int getLength();
-		
-		PhysicsBody get(int index);
-		
 	}
 	
 }

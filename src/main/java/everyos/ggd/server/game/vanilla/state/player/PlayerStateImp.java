@@ -23,16 +23,19 @@ public class PlayerStateImp implements PlayerState {
 	private final PhysicsBody physicsBody = new MessagingPhysicsBody();
 	private final int entityId;
 	private final PlayerStateEventListener listener;
+	private final boolean isBot;
 	
+	private boolean needsInit = true;
 	private boolean needsUpdate = true;
 	private PlayerStateUpdate update;
 
 	private Upgrade upgradeLevel = Upgrade.NONE;
 	
-	public PlayerStateImp(int entityId, PlayerStateEventListener listener) {
+	public PlayerStateImp(int entityId, boolean isBot, PlayerStateEventListener listener) {
 		this.entityId = entityId;
 		this.update = createInitialUpdate();
 		this.listener = listener;
+		this.isBot = isBot;
 	}
 	
 	@Override
@@ -134,23 +137,31 @@ public class PlayerStateImp implements PlayerState {
 			.setSpeed(0f)
 			.build();
 	}
-	
-	@Override
-	public Message createInitMessage(boolean isBot) {
-		return new PlayerInitMessageImp(
-			physicsBody.getCurrentPosition(),
-			isBot,
-			update);
-	}
 
 	@Override
 	public List<Message> getQueuedMessages() {
-		if (needsUpdate) {
+		if (needsInit) {
+			needsInit = false;
+			needsUpdate = false;
+			return List.of(createInitMessage(isBot));
+		} else if (needsUpdate) {
 			needsUpdate = false;
 			return List.of(createPlayerStateUpdateMessage());
 		}
 		
 		return List.of();
+	}
+	
+	@Override
+	public List<Message> createFinalMessages() {
+		return List.of();
+	}
+	
+	private Message createInitMessage(boolean isBot) {
+		return new PlayerInitMessageImp(
+			physicsBody.getCurrentPosition(),
+			isBot,
+			update);
 	}
 
 	private Message createPlayerStateUpdateMessage() {

@@ -2,16 +2,11 @@ package everyos.ggd.server.game.vanilla.state.player;
 
 import java.util.List;
 
+import everyos.ggd.server.game.vanilla.state.entity.Entity;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
-import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
-import everyos.ggd.server.physics.PhysicsBody;
 
-public interface PlayerState {
-	
-	int getEntityId();
-
-	PhysicsBody getPhysicsBody();
+public interface PlayerState extends Entity {
 	
 	PlayerStats getStats();
 	
@@ -32,10 +27,6 @@ public interface PlayerState {
 	void loose(int amount);
 	
 	void indicateMatchFinished();
-	
-	Message createInitMessage(boolean isBot);
-	
-	List<Message> getQueuedMessages();
 	
 	public static enum SpiritGainReason {
 		COLLECT_SPIRIT, BUDDY_BONUS, MEGA_FLAME, STEAL_SPIRIT, GOAL_RETURN

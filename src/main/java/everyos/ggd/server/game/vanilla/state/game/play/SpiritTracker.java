@@ -1,5 +1,6 @@
 package everyos.ggd.server.game.vanilla.state.game.play;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import everyos.ggd.server.game.Player;
@@ -7,6 +8,7 @@ import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState.SpiritGainReason;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
+import everyos.ggd.server.game.vanilla.state.spirit.SpiritStateImp;
 import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.game.vanilla.util.MathUtil;
 import everyos.ggd.server.map.MatchMap;
@@ -18,44 +20,76 @@ import everyos.ggd.server.physics.Position;
 
 public class SpiritTracker {
 	
-	private final SpiritTrail spiritTrail = new SpiritTrail();
+	private final SpiritTrailTracker spiritTrailTracker = new SpiritTrailTracker();
 	private final MatchContext matchContext;
 	private final PlayerState[] playerStates;
-	private final List<SpiritState> spiritStates;
+	private final List<SpiritState> mapSpiritStates;
+	private final List<SpiritState> playerSpiritStates;
 	
-	public SpiritTracker(MatchContext matchContext, PlayerState[] playerStates, List<SpiritState> spiritStates) {
+	public SpiritTracker(MatchContext matchContext, PlayerState[] playerStates, List<SpiritState> mapSpiritStates) {
 		this.matchContext = matchContext;
 		this.playerStates = playerStates;
-		this.spiritStates = spiritStates;
+		this.mapSpiritStates = mapSpiritStates;
+		this.playerSpiritStates = new ArrayList<>();
 	}
 
 	public void tick() {
-		for (SpiritState spiritState: spiritStates) {
-			matchContext.broadcastMessages(spiritState.getQueuedMessages());
- 		}
+		respawnMapSpiritStates();
 	}
-	
+
 	public void handlePlayerPositionUpdate(int playerEntityId, Position playerPosition) {
 		givePlayerNearbySpirits(playerEntityId, playerPosition);
-		spiritTrail.handlePlayerPositionUpdate(playerStates[playerEntityId], playerPosition);
+		spiritTrailTracker.handlePlayerPositionUpdate(playerStates[playerEntityId], playerPosition);
 		handleBaseCollision(playerEntityId, playerPosition);
 		handlePlayerCollisions(playerEntityId, playerPosition);
 	}
+	
+	private void respawnMapSpiritStates() {
+		for (SpiritState spiritState: mapSpiritStates) {
+			if (checkCanRespawnSpirit(spiritState)) {
+				spiritState.reset();
+			}
+		}
+	}
+
+	private boolean checkCanRespawnSpirit(SpiritState spiritState) {
+		return
+			spiritState.getCollectedTime() != 0 &&
+			(System.currentTimeMillis() - spiritState.getCollectedTime()) >= 20000;
+	}
 
 	private void givePlayerNearbySpirits(int playerEntityId, Position playerPosition) {
-		for (SpiritState spiritState: spiritStates) {
-			if (spiritState.getOwnerEntityId() == -1 && playerInRangeOfSpirit(playerEntityId, playerPosition, spiritState)) {
-				spiritState.setTeam(getSpiritTeam(playerEntityId));
-				spiritState.setOwnerEntityId(playerEntityId);
+		for (SpiritState spiritState: mapSpiritStates) {
+			if (spiritNotCollected(spiritState) && playerInRangeOfSpirit(playerEntityId, playerPosition, spiritState)) {
+				markSpiritCollected(spiritState);
+				SpiritState trailSpiritState = createSpirit();
+				trailSpiritState.setTeam(getSpiritTeam(playerEntityId));
+				trailSpiritState.setOwnerEntityId(playerEntityId);
+				playerSpiritStates.add(trailSpiritState);
 				PlayerState playerState = playerStates[playerEntityId];
 				playerState
 					.getSpiritList()
-					.add(spiritState);
+					.add(trailSpiritState);
 				playerState.gain(1, SpiritGainReason.COLLECT_SPIRIT);
 			}
 		}
 	}
+
+	private SpiritState createSpirit() {
+		return matchContext
+			.getEntityRegister()
+			.createEntity(id -> new SpiritStateImp(id, null));
+	}
+
+	private boolean spiritNotCollected(SpiritState spiritState) {
+		return spiritState.getCollectedTime() == 0;
+	}
 	
+	private void markSpiritCollected(SpiritState spiritState) {
+		spiritState.setCollectedTime(System.currentTimeMillis());
+		spiritState.setTeam(SpiritTeam.NONE);
+	}
+
 	private SpiritTeam getSpiritTeam(int playerEntityId) {
 		Player[] players = matchContext.getPlayers();
 		return playerEntityId < players.length / 2 ?
@@ -78,7 +112,7 @@ public class SpiritTracker {
 		}
 		int points = spiritStates.size();
 		playerState.getStats().incrementScore(points);
-		freeSpirits(spiritStates);
+		deleteSpirits(spiritStates);
 		playerState.gain(points, SpiritGainReason.GOAL_RETURN);
 	}
 	
@@ -92,17 +126,19 @@ public class SpiritTracker {
 		return !tile.greenCanPass() && tile.purpleCanPass();
 	}
 	
-	private void freeSpirits(List<SpiritState> spiritStates) {
+	private void deleteSpirits(List<SpiritState> spiritStates) {
 		for (SpiritState state: spiritStates) {
-			state.setOwnerEntityId(-1);
-			state.reset();
+			playerSpiritStates.remove(state);
+			matchContext
+				.getEntityRegister()
+				.removeEntity(state);
 		}
 		spiritStates.clear();
 	}
 	
 	private void handlePlayerCollisions(int playerEntityId, Position playerPosition) {
-		for (SpiritState spiritState: spiritStates) {
-			if (spiritState.getOwnerEntityId() != -1 && playerInRangeOfOtherTeamSpirit(playerEntityId, playerPosition, spiritState)) {
+		for (SpiritState spiritState: playerSpiritStates) {
+			if (playerInRangeOfOtherTeamSpirit(playerEntityId, playerPosition, spiritState)) {
 				int otherPlayerId = spiritState.getOwnerEntityId();
 				int stolenSpiritCount = setTrailColor(playerEntityId, spiritState);
 				playerStates[playerEntityId].gain(stolenSpiritCount, SpiritGainReason.STEAL_SPIRIT);

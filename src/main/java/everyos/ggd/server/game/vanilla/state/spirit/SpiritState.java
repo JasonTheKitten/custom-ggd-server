@@ -1,29 +1,24 @@
 package everyos.ggd.server.game.vanilla.state.spirit;
 
-import java.util.List;
-
-import everyos.ggd.server.message.Message;
+import everyos.ggd.server.game.vanilla.state.entity.Entity;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
 import everyos.ggd.server.physics.PhysicsBody;
-import everyos.ggd.server.physics.Position;
 
-public interface SpiritState {
+public interface SpiritState extends Entity {
 	
-	int getEntityId();
-
 	int getOwnerEntityId();
 	
 	void setOwnerEntityId(int id);
 	
-	PhysicsBody getPhysicsBody();
+	long getCollectedTime();
 	
-	Position getInitialPosition();
+	void setCollectedTime(long time);
+	
+	PhysicsBody getPhysicsBody();
 
 	SpiritTeam getTeam();
 	
 	void setTeam(SpiritTeam team);
-
-	List<Message> getQueuedMessages();
 
 	void reset();
 	

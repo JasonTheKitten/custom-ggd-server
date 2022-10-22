@@ -7,7 +7,7 @@ public interface SpiritStateUpdate {
 	SpiritTeam getTeam();
 
 	public static enum SpiritTeam {
-		NO_TEAM, GREEN_TEAM, PURPLE_TEAM
+		NO_TEAM, GREEN_TEAM, PURPLE_TEAM, NONE
 	}
 	
 }

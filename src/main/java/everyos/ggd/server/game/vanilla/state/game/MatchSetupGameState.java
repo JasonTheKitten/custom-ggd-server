@@ -40,32 +40,49 @@ public class MatchSetupGameState implements GameState {
 	}
 
 	private void setupMatch() {
+		sendMatchInitMessage();
 		PlayerState[] playerStates = initPlayerState();
-		List<SpiritState> spiritStates = initSpiritStates();
-		GameState playState = new PlayGameState(matchContext, playerStates, spiritStates);
+		List<SpiritState> mapSpiritStates = initMapSpiritStates();
+		sendQueuedEntityMessages();
+		sendSessionDataMessages();
+		GameState playState = new PlayGameState(matchContext, playerStates, mapSpiritStates);
 		matchContext.setGameState(new CountdownGameState(matchContext, playState));
 	}
 
-	private PlayerState[] initPlayerState() {
+	private void sendMatchInitMessage() {
 		Message matchInitMessage = new MatchInitMessageImp(matchContext.getMapName() + ".json");
+		matchContext.broadcast(matchInitMessage);
+	}
+	
+	private void sendSessionDataMessages() {
+		Player[] players = matchContext.getPlayers();
+		for (int i = 0; i < players.length; i++) {
+			players[i].onMessageFromServer(createSessionDataSetMessage(i));
+		}
+	}
+	
+	private Message createSessionDataSetMessage(int playerNumber) {
+		return new SessionDataSetMessageImp(playerNumber, matchContext.getMatchId(), "shard0");
+	}
+
+	private PlayerState[] initPlayerState() {
 		Player[] players = matchContext.getPlayers();
 		PlayerState[] playerStates = new PlayerState[players.length];
 		for (int i = 0; i < players.length; i++) {
 			Player player = players[i];
-			player.onMessageFromServer(matchInitMessage);
-			PlayerState playerState = new PlayerStateImp(i, new PlayerStateEventListenerImp());
-			playerStates[i] = playerState;
-			playerState.getPhysicsBody().setCurrentPosition(getPlayerStartPosition(matchContext.getMap(), i));
-			Message initialPlayerStateMessage = playerState.createInitMessage(player.isBot());
-			matchContext.broadcast(initialPlayerStateMessage);
-			player.onMessageFromServer(createSessionDataSetMessage(i));
+			playerStates[i] = createPlayerState(player, i);
 		}
 		
 		return playerStates;
 	}
 
-	private Message createSessionDataSetMessage(int playerNumber) {
-		return new SessionDataSetMessageImp(playerNumber, matchContext.getMatchId(), "shard0");
+	private PlayerState createPlayerState(Player player, int characterId) {
+		PlayerState playerState = matchContext
+			.getEntityRegister()
+			.createEntity(id -> new PlayerStateImp(id, player.isBot(), new PlayerStateEventListenerImp()));
+		playerState.getPhysicsBody().setCurrentPosition(getPlayerStartPosition(matchContext.getMap(), characterId));
+		
+		return playerState;
 	}
 
 	private Position getPlayerStartPosition(MatchMap map, int playerNumber) {
@@ -88,19 +105,27 @@ public class MatchSetupGameState implements GameState {
 			MapUtil.getPurpleBaseTileLocations(map);
 	}
 	
-	private List<SpiritState> initSpiritStates() {
+	private List<SpiritState> initMapSpiritStates() {
 		List<SpiritState> states = new ArrayList<>();
-		int nextEntityId = 8;
 		MatchMap map = matchContext.getMap();
 		for (Location spiritLocation: MapUtil.getSpiritFlameTileLocations(map)) {
 			Position spiritPosition = MapUtil.locationToPosition(map, spiritLocation);
-			int entityId = nextEntityId++;
-			SpiritState state = new SpiritStateImp(entityId, spiritPosition);
+			SpiritState state = createMapSpiritState(spiritPosition);
 			states.add(state);
 			matchContext.broadcastMessages(state.getQueuedMessages());
 		}
 		
 		return states;
+	}
+	
+	private SpiritState createMapSpiritState(Position spiritPosition) {
+		return matchContext
+			.getEntityRegister()
+			.createEntity(id -> new SpiritStateImp(id, spiritPosition));
+	}
+
+	private void sendQueuedEntityMessages() {
+		matchContext.broadcastMessages(matchContext.getEntityRegister().getQueuedMessages());
 	}
 
 }

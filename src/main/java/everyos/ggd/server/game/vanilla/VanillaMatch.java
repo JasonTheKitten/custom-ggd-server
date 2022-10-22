@@ -5,6 +5,8 @@ import java.util.List;
 import everyos.ggd.server.common.TickTimer;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
+import everyos.ggd.server.game.vanilla.state.entity.EntityRegister;
+import everyos.ggd.server.game.vanilla.state.entity.EntityRegisterImp;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
 import everyos.ggd.server.game.vanilla.state.game.MatchFinishedGameState;
 import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
@@ -23,6 +25,7 @@ public class VanillaMatch implements Match {
 	private final MatchContext matchContext = new MatchContextImp();
 	private final String mapName = chooseMap();
 	private final MatchMap map = MapLoader.loadFromResourceByName(mapName);
+	private final EntityRegister entityRegister = new EntityRegisterImp();
 	private final TickTimer tickTimer;
 	
 	private GameState gameState = new MatchSetupGameState(matchContext);
@@ -144,6 +147,11 @@ public class VanillaMatch implements Match {
 				}
 				player.onMessageFromServer(message);
 			}
+		}
+
+		@Override
+		public EntityRegister getEntityRegister() {
+			return entityRegister;
 		}
 		
 	}

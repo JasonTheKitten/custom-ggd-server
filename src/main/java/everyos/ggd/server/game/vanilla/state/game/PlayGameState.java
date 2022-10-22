@@ -7,11 +7,11 @@ import everyos.ggd.server.game.vanilla.state.game.play.GameTimer;
 import everyos.ggd.server.game.vanilla.state.game.play.MatchStateTracker;
 import everyos.ggd.server.game.vanilla.state.game.play.PhysicsTracker;
 import everyos.ggd.server.game.vanilla.state.game.play.PlayerMessageProcessor;
-import everyos.ggd.server.game.vanilla.state.game.play.PlayerSpiritPhysicsBodiesView;
 import everyos.ggd.server.game.vanilla.state.game.play.SpiritTracker;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
 import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
+import everyos.ggd.server.message.Message;
 import everyos.ggd.server.physics.Position;
 
 public class PlayGameState implements GameState {
@@ -25,13 +25,12 @@ public class PlayGameState implements GameState {
 	private final PlayerMessageProcessor playerMessageProcessor;
 	private final MatchStateTracker matchStateTracker;
 	
-	public PlayGameState(MatchContext matchContext, PlayerState[] playerStates, List<SpiritState> spiritStates) {
+	public PlayGameState(MatchContext matchContext, PlayerState[] playerStates, List<SpiritState> mapSpiritStates) {
 		this.matchContext = matchContext;
 		this.playerStates = playerStates;
 		
-		this.physicsTracker = new PhysicsTracker(
-			new PlayerSpiritPhysicsBodiesView(playerStates, spiritStates));
-		this.spiritTracker = new SpiritTracker(matchContext, playerStates, spiritStates);
+		this.physicsTracker = new PhysicsTracker(matchContext);
+		this.spiritTracker = new SpiritTracker(matchContext, playerStates, mapSpiritStates);
 		this.playerMessageProcessor = new PlayerMessageProcessor(
 			matchContext, playerStates,
 			(playerEntityId, playerPosition) -> handlePlayerPositionUpdate(playerEntityId, playerPosition));
@@ -42,6 +41,7 @@ public class PlayGameState implements GameState {
 	public void start() {
 		timer.start();
 		matchStateTracker.tick();
+		sendEntityStateUpdates();
 	}
 
 	@Override
@@ -54,9 +54,9 @@ public class PlayGameState implements GameState {
 		
 		physicsTracker.tick();
 		playerMessageProcessor.tick();
-		processPlayerStateUpdates();
 		spiritTracker.tick();
 		matchStateTracker.tick();
+		sendEntityStateUpdates();
 	}
 
 	private PlayerStats[] getPlayerStats() {
@@ -68,10 +68,11 @@ public class PlayGameState implements GameState {
 		return stats;
 	}
 
-	private void processPlayerStateUpdates() {
-		for (PlayerState playerState: playerStates) {
-			matchContext.broadcastMessages(playerState.getQueuedMessages());
-		}
+	private void sendEntityStateUpdates() {
+		List<Message> queuedMessages = matchContext
+			.getEntityRegister()
+			.getQueuedMessages();
+		matchContext.broadcastMessages(queuedMessages);
 	}
 	
 	private void setFinalPlayerStates() {

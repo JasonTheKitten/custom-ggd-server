@@ -23,6 +23,7 @@ public class SpiritStateImp implements SpiritState {
 	private boolean needsUpdate;
 	
 	private int ownerEntityId;
+	private long collectedTime;
 	private SpiritTeam team;
 
 	public SpiritStateImp(int entityId, Position initialPosition) {
@@ -47,8 +48,13 @@ public class SpiritStateImp implements SpiritState {
 	}
 	
 	@Override
-	public Position getInitialPosition() {
-		return this.initialPosition;
+	public long getCollectedTime() {
+		return this.collectedTime;
+	}
+
+	@Override
+	public void setCollectedTime(long time) {
+		this.collectedTime = time;
 	}
 
 	@Override
@@ -85,6 +91,13 @@ public class SpiritStateImp implements SpiritState {
 		
 		return queuedMessages;
 	}
+	
+	@Override
+	public List<Message> createFinalMessages() {
+		setTeam(SpiritTeam.NONE);
+		return getQueuedMessages();
+	}
+
 
 	private Message createSpiritInitMessage() {
 		return new SpiritInitMessageImp(
@@ -105,8 +118,8 @@ public class SpiritStateImp implements SpiritState {
 		}
 		physicsBody.setCurrentVelocity(new VelocityImp(0, 0));
 		ownerEntityId = -1;
+		collectedTime = 0;
 		team = SpiritTeam.NO_TEAM;
 		needsUpdate = true;
 	}
-
 }
