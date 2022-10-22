@@ -58,13 +58,13 @@ public class MatchFinishedGameState implements GameState {
 	}
 
 	private void addPlayerAwards(int playerIndex, PlayerStats playerPersonalStats, List<PlayerAward> awards) {
-		if (playerPersonalStats.getScore() == getHighestScore()) {
+		if (playerPersonalStats.getScore() != 0 && playerPersonalStats.getScore() == getHighestScore()) {
 			awards.add(new PlayerAwardImp(playerIndex, Award.MOST_SPIRITED));
 		}
-		if (playerPersonalStats.getStolen() == getHighestStolen()) {
+		if (playerPersonalStats.getStolen() != 0 && playerPersonalStats.getStolen() == getHighestStolen()) {
 			awards.add(new PlayerAwardImp(playerIndex, Award.POLTERHEIST));
 		}
-		if (playerPersonalStats.getStolenFrom() == getHighestStolenFrom()) {
+		if (playerPersonalStats.getStolenFrom() != 0 && playerPersonalStats.getStolenFrom() == getHighestStolenFrom()) {
 			awards.add(new PlayerAwardImp(playerIndex, Award.MOST_GENEROUS));
 		}
 		if (playerPersonalStats.getScore() == getLowestScore()) {
