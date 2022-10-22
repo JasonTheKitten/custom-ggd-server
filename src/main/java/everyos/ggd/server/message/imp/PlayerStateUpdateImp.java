@@ -7,25 +7,27 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	private final int entityId;
 	private final float speed;
 	private final int glowRadius;
+	private final Upgrade upgrade;
 	private final int spiritsHeld;
 	private final boolean connected;
 	private final Animation animation;
 	private final int animationAmount;
 	private final Emotion emotion;
-	private final UpgradeData upgradeData;
-	private final Upgrade upgrade;
+	private final UpgradeAnimation upgradeAnimation;
+	private final Upgrade upgradeAnimationUpgrade;
 
 	public PlayerStateUpdateImp(PlayerStateUpdateBuilder builder) {
 		this.entityId = builder.getEntityId();
 		this.speed = builder.getSpeed();
 		this.glowRadius = builder.getGlowRadius();
-		this.spiritsHeld = builder.getNumSpiritsHeld();
+		this.upgrade = builder.getUpgrade();
+		this.spiritsHeld = builder.getTotalSpiritsCollected();
 		this.connected = builder.getConnected();
 		this.animation = builder.getAnimation();
 		this.animationAmount = builder.getAnimationAmount();
 		this.emotion = builder.getEmotion();
-		this.upgradeData = builder.getUpgradeData();
-		this.upgrade = builder.getUpgrade();
+		this.upgradeAnimation = builder.getUpgradeAnimation();
+		this.upgradeAnimationUpgrade = builder.getUpgradeAnimationUpgrade();
 	}
 	
 	@Override
@@ -44,7 +46,12 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	}
 	
 	@Override
-	public int getNumSpiritsHeld() {
+	public Upgrade getUpgrade() {
+		return this.upgrade;
+	}
+	
+	@Override
+	public int getTotalSpiritsCollected() {
 		return this.spiritsHeld;
 	}
 
@@ -69,13 +76,13 @@ public class PlayerStateUpdateImp implements PlayerStateUpdate {
 	}
 
 	@Override
-	public UpgradeData getUpgradeData() {
-		return this.upgradeData;
+	public UpgradeAnimation getUpgradeAnimation() {
+		return this.upgradeAnimation;
 	}
 
 	@Override
-	public Upgrade getUpgrade() {
-		return this.upgrade;
+	public Upgrade getUpgradeAnimationUpgrade() {
+		return this.upgradeAnimationUpgrade;
 	}
 
 }

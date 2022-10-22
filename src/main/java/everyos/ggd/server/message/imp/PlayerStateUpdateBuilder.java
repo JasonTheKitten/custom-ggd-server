@@ -4,20 +4,21 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.PlayerStateUpdate.Animation;
 import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
 import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
-import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeAnimation;
 
 public class PlayerStateUpdateBuilder {
 	
 	private int entityId;
 	private float speed;
 	private int glowRadius;
-	private int spiritsHeld;
+	private Upgrade upgrade;
+	private int totalSpiritsCollected;
 	private boolean connected;
 	private Animation animation;
 	private int animationAmount;
 	private Emotion emotion;
-	private UpgradeData upgradeData;
-	private Upgrade upgrade;
+	private UpgradeAnimation upgradeAnimation;
+	private Upgrade upgradeAnimationUpgrade;
 
 	public PlayerStateUpdateBuilder() {}
 	
@@ -51,14 +52,24 @@ public class PlayerStateUpdateBuilder {
 		return this.glowRadius;
 	}
 	
-	public PlayerStateUpdateBuilder setNumSpiritsHeld(int spiritsHeld) {
-		this.spiritsHeld = spiritsHeld;
+	public PlayerStateUpdateBuilder setUpgrade(Upgrade upgrade) {
+		this.upgrade = upgrade;
 		
 		return this;
 	}
 	
-	public int getNumSpiritsHeld() {
-		return this.spiritsHeld;
+	public Upgrade getUpgrade() {
+		return this.upgrade;
+	}
+	
+	public PlayerStateUpdateBuilder setTotalSpiritsCollected(int spiritsCollected) {
+		this.totalSpiritsCollected = spiritsCollected;
+		
+		return this;
+	}
+	
+	public int getTotalSpiritsCollected() {
+		return this.totalSpiritsCollected;
 	}
 	
 	public PlayerStateUpdateBuilder setConnected(boolean connected) {
@@ -96,19 +107,19 @@ public class PlayerStateUpdateBuilder {
 		return this.emotion;
 	}
 	
-	public PlayerStateUpdateBuilder setUpgrade(UpgradeData upgradeData, Upgrade upgrade) {
-		this.upgradeData = upgradeData;
-		this.upgrade = upgrade;
+	public PlayerStateUpdateBuilder setUpgradeAnimation(UpgradeAnimation upgradeData, Upgrade upgrade) {
+		this.upgradeAnimation = upgradeData;
+		this.upgradeAnimationUpgrade = upgrade;
 		
 		return this;
 	}
 	
-	public UpgradeData getUpgradeData() {
-		return this.upgradeData;
+	public UpgradeAnimation getUpgradeAnimation() {
+		return this.upgradeAnimation;
 	}
 	
-	public Upgrade getUpgrade() {
-		return this.upgrade;
+	public Upgrade getUpgradeAnimationUpgrade() {
+		return this.upgradeAnimationUpgrade;
 	}
 	
 	public PlayerStateUpdate build() {
@@ -121,11 +132,12 @@ public class PlayerStateUpdateBuilder {
 		builder.setEntityId(stateUpdate.getEntityId());
 		builder.setSpeed(stateUpdate.getSpeed());
 		builder.setGlowRadius(stateUpdate.getGlowRadius());
-		builder.setNumSpiritsHeld(stateUpdate.getNumSpiritsHeld());
+		builder.setUpgrade(stateUpdate.getUpgrade());
+		builder.setTotalSpiritsCollected(stateUpdate.getTotalSpiritsCollected());
 		builder.setConnected(stateUpdate.isConnected());
 		builder.setAnimation(stateUpdate.getAnimation(), stateUpdate.getAnimationAmount());
 		builder.setEmotion(stateUpdate.getEmotion());
-		builder.setUpgrade(stateUpdate.getUpgradeData(), stateUpdate.getUpgrade());
+		builder.setUpgradeAnimation(stateUpdate.getUpgradeAnimation(), stateUpdate.getUpgradeAnimationUpgrade());
 		
 		return builder;
 	}

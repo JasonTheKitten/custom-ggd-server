@@ -106,7 +106,7 @@ public class SpiritTracker {
 				int otherPlayerId = spiritState.getOwnerEntityId();
 				int stolenSpiritCount = setTrailColor(playerEntityId, spiritState);
 				playerStates[playerEntityId].gain(stolenSpiritCount, SpiritGainReason.STEAL_SPIRIT);
-				playerStates[otherPlayerId].getStats().incrementStolenFrom(stolenSpiritCount);
+				playerStates[otherPlayerId].loose(stolenSpiritCount);
 			}
 		}
 	}

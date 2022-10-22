@@ -7,8 +7,8 @@ public class PowerUpTracker {
 	
 	private static int SPEED_NUM_SOULS = 15;
 	private static int LIGHT_NUM_SOULS = 45;
-	private static int MAGNET_NUM_SOULS = 80;
-	private static int WALLS_NUM_SOULS = 120;
+	private static int MAGNET_NUM_SOULS = 105;
+	private static int WALLS_NUM_SOULS = 225;
 
 	public void onBaseReturnGain(PlayerState playerState, int amount) {
 		int score = playerState

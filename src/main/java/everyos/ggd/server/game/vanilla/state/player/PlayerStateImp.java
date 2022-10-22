@@ -10,7 +10,7 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.PlayerStateUpdate.Animation;
 import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
 import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
-import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeAnimation;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
 import everyos.ggd.server.message.imp.PlayerStateUpdateBuilder;
 import everyos.ggd.server.message.imp.PlayerStateUpdateMessageImp;
@@ -65,7 +65,8 @@ public class PlayerStateImp implements PlayerState {
 		this.upgradeLevel = upgrade;
 		needsUpdate = true;
 		update = PlayerStateUpdateBuilder.clone(update)
-			.setUpgrade(UpgradeData.ACHIEVED, upgrade)
+			.setUpgradeAnimation(UpgradeAnimation.ACHIEVED, upgrade)
+			.setUpgrade(upgrade)
 			.build();
 	}
 	
@@ -73,7 +74,7 @@ public class PlayerStateImp implements PlayerState {
 	public void setUpgradeHint(Upgrade upgrade) {
 		needsUpdate = true;
 		update = PlayerStateUpdateBuilder.clone(update)
-			.setUpgrade(UpgradeData.RETURN_TO_BASE, upgrade)
+			.setUpgradeAnimation(UpgradeAnimation.RETURN_TO_BASE, upgrade)
 			.build();
 	}
 	
@@ -97,7 +98,7 @@ public class PlayerStateImp implements PlayerState {
 	public void gain(int amount, SpiritGainReason reason) {
 		needsUpdate = true;
 		PlayerStateUpdateBuilder updateBuilder = PlayerStateUpdateBuilder.clone(update)
-			.setNumSpiritsHeld(spiritList.size());
+			.setTotalSpiritsCollected(stats.getScore() + spiritList.size());
 		switch (reason) {
 		case STEAL_SPIRIT:
 			stats.incrementStolen(amount);
@@ -112,6 +113,26 @@ public class PlayerStateImp implements PlayerState {
 		update = updateBuilder.build();
 		
 		listener.onGain(this, amount, reason);
+	}
+	
+	@Override
+	public void loose(int amount) {
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setTotalSpiritsCollected(stats.getScore() + spiritList.size())
+			.setAnimation(Animation.SPIRITS_LOST, -amount)
+			.setEmotion(Emotion.SAD)
+			.build();
+		stats.incrementStolenFrom(amount);
+	}
+
+	@Override
+	public void indicateMatchFinished() {
+		needsUpdate = true;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setTotalSpiritsCollected(stats.getScore())
+			.setSpeed(0f)
+			.build();
 	}
 	
 	@Override
@@ -137,7 +158,7 @@ public class PlayerStateImp implements PlayerState {
 		update = PlayerStateUpdateBuilder.clone(update)
 			.setAnimation(Animation.NONE, 0)
 			.setEmotion(Emotion.NONE)
-			.setUpgrade(UpgradeData.NONE, Upgrade.NONE)
+			.setUpgradeAnimation(UpgradeAnimation.NONE, Upgrade.NONE)
 			.build();
 		
 		return message;
@@ -149,19 +170,13 @@ public class PlayerStateImp implements PlayerState {
 			.setEntityId(entityId)
 			.setSpeed(15f)
 			.setGlowRadius(5)
-			.setNumSpiritsHeld(spiritList.size())
+			.setUpgrade(Upgrade.NONE)
+			.setTotalSpiritsCollected(0)
 			.setConnected(true)
 			.setAnimation(Animation.NONE, 0)
 			.setEmotion(Emotion.NONE)
-			.setUpgrade(UpgradeData.NONE, Upgrade.NONE)
+			.setUpgradeAnimation(UpgradeAnimation.NONE, Upgrade.NONE)
 			.build();
-	}
-
-	public void performTemporarayCreditScreenPatch() {
-		update = PlayerStateUpdateBuilder.clone(update)
-			.setNumSpiritsHeld(stats.getScore())
-			.build();
-		needsUpdate = true;
 	}
 
 }

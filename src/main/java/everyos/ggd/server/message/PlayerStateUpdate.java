@@ -8,7 +8,9 @@ public interface PlayerStateUpdate {
 	
 	int getGlowRadius();
 	
-	int getNumSpiritsHeld();
+	Upgrade getUpgrade();
+	
+	int getTotalSpiritsCollected();
 	
 	boolean isConnected();
 	
@@ -18,13 +20,13 @@ public interface PlayerStateUpdate {
 	
 	Emotion getEmotion();
 	
-	UpgradeData getUpgradeData();
+	UpgradeAnimation getUpgradeAnimation();
 	
-	Upgrade getUpgrade();
+	Upgrade getUpgradeAnimationUpgrade();
 	
 	public static enum Animation {
 		NONE,
-		UNKNOWN,
+		SPIRITS_LOST,
 		SPIRITS_COLLECTED,
 		BUDDY_BONUS,
 		MEGA_FLAME
@@ -34,7 +36,7 @@ public interface PlayerStateUpdate {
 		NONE, HAPPY, SAD
 	}
 	
-	public static enum UpgradeData {
+	public static enum UpgradeAnimation {
 		NONE, RETURN_TO_BASE, ACHIEVED
 	}
 	

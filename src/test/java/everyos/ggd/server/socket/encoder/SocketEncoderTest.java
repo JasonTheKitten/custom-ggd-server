@@ -33,6 +33,15 @@ public class SocketEncoderTest {
 	}
 	
 	@Test
+	@DisplayName("Can encode simple number")
+	public void canEncodeNegativeNumber() {
+		byte[] encoded = encoder.encodeNumber(-1);
+		Assertions.assertArrayEquals(new byte[] {
+			-1, -1, -1, -1, -1, -1, -1, -1, 1
+		}, encoded);
+	}
+	
+	@Test
 	@DisplayName("Can encode string")
 	public void canEncodeString() {
 		byte[] encoded = encoder.encodeString("XKCD");

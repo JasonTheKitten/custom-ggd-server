@@ -20,7 +20,7 @@ import everyos.ggd.server.message.PlayerStateUpdate;
 import everyos.ggd.server.message.PlayerStateUpdate.Animation;
 import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
 import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
-import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeAnimation;
 import everyos.ggd.server.message.PlayerStateUpdateMessage;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
@@ -253,10 +253,11 @@ public class MessageEncoderTest {
 			.setConnected(true)
 			.setSpeed(1.1f)
 			.setGlowRadius(10)
-			.setNumSpiritsHeld(15)
+			.setUpgrade(Upgrade.LIGHT_UPGRADE)
+			.setTotalSpiritsCollected(15)
 			.setAnimation(Animation.BUDDY_BONUS, 15)
 			.setEmotion(Emotion.HAPPY)
-			.setUpgrade(UpgradeData.ACHIEVED, Upgrade.LIGHT_UPGRADE)
+			.setUpgradeAnimation(UpgradeAnimation.ACHIEVED, Upgrade.LIGHT_UPGRADE)
 			.build();
 	}
 	
@@ -271,9 +272,9 @@ public class MessageEncoderTest {
 		Assertions.assertEquals(15, updateData.getInt(5));
 		Assertions.assertTrue(updateData.getBoolean(7));
 		
-		SocketArray upgradeData = updateData.getArray(12);
-		Assertions.assertEquals(2, upgradeData.getInt(0));
-		Assertions.assertEquals(2, upgradeData.getInt(1));
+		SocketArray upgradeAnimationData = updateData.getArray(12);
+		Assertions.assertEquals(2, upgradeAnimationData.getInt(0));
+		Assertions.assertEquals(2, upgradeAnimationData.getInt(1));
 		
 		SocketArray animationData = updateData.getArray(13);
 		Assertions.assertEquals(3, animationData.getInt(0));

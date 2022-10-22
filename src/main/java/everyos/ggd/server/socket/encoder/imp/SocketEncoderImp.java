@@ -13,7 +13,11 @@ public class SocketEncoderImp implements SocketEncoder {
 	@Override
 	public byte[] encodeNumber(int i) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		pushInt(outputStream, i);
+		if (i >= 0) {
+			pushPositiveInt(outputStream, i);
+		} else {
+			pushNegativeInt(outputStream, i);
+		}
 		
 		return outputStream.toByteArray();
 	}
@@ -50,7 +54,7 @@ public class SocketEncoderImp implements SocketEncoder {
 	private void pushArrayOverload(ByteArrayOutputStream outputStream, SocketArray array, int i) {
 		for (int key: array.overload(i).keys()) {
 			RawEntry entry = array.overload(i).getRaw(key);
-			pushInt(outputStream, encodeIndex(key, entry.type()));
+			pushPositiveInt(outputStream, encodeIndex(key, entry.type()));
 			pushRawEntry(outputStream, entry);
 		}
 	}
@@ -59,7 +63,7 @@ public class SocketEncoderImp implements SocketEncoder {
 		return ((i + 1) << 3) + type;
 	}
 
-	private void pushInt(ByteArrayOutputStream outputStream, int i) {
+	private void pushPositiveInt(ByteArrayOutputStream outputStream, int i) {
 		while (i > 127) {
 			outputStream.write((i & ((1 << 7) - 1)) + (1 << 7));
 			i >>>= 7;
@@ -67,9 +71,17 @@ public class SocketEncoderImp implements SocketEncoder {
 		outputStream.write(i);
 	}
 	
+	private void pushNegativeInt(ByteArrayOutputStream outputStream, int number) {
+		for (int i = 0; i < 8; i++) {
+			outputStream.write((number & ((1 << 7) - 1)) + (1 << 7));
+			number >>= 7;
+		}
+		outputStream.write(1);
+	}
+	
 	private void pushRawEntry(ByteArrayOutputStream outputStream, RawEntry entry) {
 		if (entry.type() == 2) {
-			pushInt(outputStream, entry.length());
+			pushPositiveInt(outputStream, entry.length());
 		}
 		outputStream.writeBytes(Arrays.copyOfRange(
 			entry.bytes(),

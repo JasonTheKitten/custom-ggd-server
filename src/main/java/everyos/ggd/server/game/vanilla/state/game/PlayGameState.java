@@ -10,7 +10,6 @@ import everyos.ggd.server.game.vanilla.state.game.play.PlayerMessageProcessor;
 import everyos.ggd.server.game.vanilla.state.game.play.PlayerSpiritPhysicsBodiesView;
 import everyos.ggd.server.game.vanilla.state.game.play.SpiritTracker;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
-import everyos.ggd.server.game.vanilla.state.player.PlayerStateImp;
 import everyos.ggd.server.game.vanilla.state.player.PlayerStats;
 import everyos.ggd.server.game.vanilla.state.spirit.SpiritState;
 import everyos.ggd.server.physics.Position;
@@ -48,7 +47,7 @@ public class PlayGameState implements GameState {
 	@Override
 	public void ping() {
 		if (timer.finished()) {
-			executeTemporaryCreditScreenPatch();
+			setFinalPlayerStates();
 			matchContext.setGameState(new MatchFinishedGameState(matchContext, getPlayerStats()));
 			return;
 		}
@@ -59,7 +58,7 @@ public class PlayGameState implements GameState {
 		spiritTracker.tick();
 		matchStateTracker.tick();
 	}
-	
+
 	private PlayerStats[] getPlayerStats() {
 		PlayerStats[] stats = new PlayerStats[playerStates.length];
 		for (int i = 0; i < playerStates.length; i++) {
@@ -69,17 +68,16 @@ public class PlayGameState implements GameState {
 		return stats;
 	}
 
-	private void executeTemporaryCreditScreenPatch() {
+	private void processPlayerStateUpdates() {
 		for (PlayerState playerState: playerStates) {
-			((PlayerStateImp) playerState).performTemporarayCreditScreenPatch();
 			matchContext.broadcastMessages(playerState.getQueuedMessages());
 		}
 	}
-
-	private void processPlayerStateUpdates() {
+	
+	private void setFinalPlayerStates() {
 		for (PlayerState playerState: playerStates) {
-			matchContext.broadcastMessages(
-				playerState.getQueuedMessages());
+			playerState.indicateMatchFinished();
+			matchContext.broadcastMessages(playerState.getQueuedMessages());
 		}
 	}
 	

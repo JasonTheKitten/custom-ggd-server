@@ -29,6 +29,10 @@ public interface PlayerState {
 	
 	void gain(int amount, SpiritGainReason reason);
 	
+	void loose(int amount);
+	
+	void indicateMatchFinished();
+	
 	Message createInitMessage(boolean isBot);
 	
 	List<Message> getQueuedMessages();
