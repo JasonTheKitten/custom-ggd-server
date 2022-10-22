@@ -100,6 +100,7 @@ public class PlayerStateImp implements PlayerState {
 			.setNumSpiritsHeld(spiritList.size());
 		switch (reason) {
 		case STEAL_SPIRIT:
+			stats.incrementStolen(amount);
 		case GOAL_RETURN:
 			updateBuilder
 				.setAnimation(Animation.SPIRITS_COLLECTED, amount)

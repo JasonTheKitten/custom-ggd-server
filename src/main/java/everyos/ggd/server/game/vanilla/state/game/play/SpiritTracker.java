@@ -103,8 +103,10 @@ public class SpiritTracker {
 	private void handlePlayerCollisions(int playerEntityId, Position playerPosition) {
 		for (SpiritState spiritState: spiritStates) {
 			if (spiritState.getOwnerEntityId() != -1 && playerInRangeOfOtherTeamSpirit(playerEntityId, playerPosition, spiritState)) {
+				int otherPlayerId = spiritState.getOwnerEntityId();
 				int stolenSpiritCount = setTrailColor(playerEntityId, spiritState);
 				playerStates[playerEntityId].gain(stolenSpiritCount, SpiritGainReason.STEAL_SPIRIT);
+				playerStates[otherPlayerId].getStats().incrementStolenFrom(stolenSpiritCount);
 			}
 		}
 	}

@@ -11,15 +11,16 @@ import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.MatchFinishedMessage;
 import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward;
-import everyos.ggd.server.message.PlayerStateUpdate.Animation;
-import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
-import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
-import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
+import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward.Award;
 import everyos.ggd.server.message.MatchInitMessage;
 import everyos.ggd.server.message.MatchStateUpdateMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerInitMessage;
 import everyos.ggd.server.message.PlayerStateUpdate;
+import everyos.ggd.server.message.PlayerStateUpdate.Animation;
+import everyos.ggd.server.message.PlayerStateUpdate.Emotion;
+import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
+import everyos.ggd.server.message.PlayerStateUpdate.UpgradeData;
 import everyos.ggd.server.message.PlayerStateUpdateMessage;
 import everyos.ggd.server.message.ServerConnectMessage;
 import everyos.ggd.server.message.SessionDataSetMessage;
@@ -31,6 +32,7 @@ import everyos.ggd.server.message.imp.CountdownMessageImp;
 import everyos.ggd.server.message.imp.EntityMoveMessageImp;
 import everyos.ggd.server.message.imp.EntityTeleportMessageImp;
 import everyos.ggd.server.message.imp.MatchFinishedMessageImp;
+import everyos.ggd.server.message.imp.MatchFinishedMessageImp.PlayerAwardImp;
 import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.MatchStateUpdateMessageImp;
 import everyos.ggd.server.message.imp.PlayerInitMessageImp;
@@ -164,13 +166,23 @@ public class MessageEncoderTest {
 	@Test
 	@DisplayName("Can encode match finish message")
 	public void canEncodeMatchFinishMessage() {
-		MatchFinishedMessage message = new MatchFinishedMessageImp(1, 2, new PlayerAward[] {});
+		MatchFinishedMessage message = new MatchFinishedMessageImp(1, 2, new PlayerAward[] {
+			new PlayerAwardImp(0, Award.MOST_GENEROUS),
+			new PlayerAwardImp(1, Award.POLTERHEIST),
+		});
 		SocketArray encoded = messageEncoder.encode(message);
 		Assertions.assertEquals(Message.MATCH_UPDATE_OR_FINISH, encoded.getInt(0));
 		SocketArray matchFinishedData = encoded.getArray(10);
 		Assertions.assertEquals(1, matchFinishedData.getInt(0));
 		Assertions.assertTrue(matchFinishedData.getBoolean(6));
 		Assertions.assertEquals(2, matchFinishedData.getInt(7));
+		SocketArray awardData1 = matchFinishedData.getArray(9);
+		Assertions.assertEquals(1, awardData1.getInt(0));
+		Assertions.assertEquals(Award.MOST_GENEROUS.ordinal(), awardData1.getInt(1));
+		SocketArray awardData2 = matchFinishedData.overload(1).getArray(9);
+		Assertions.assertEquals(2, awardData2.getInt(0));
+		Assertions.assertEquals(Award.POLTERHEIST.ordinal(), awardData2.getInt(1));
+		
 	}
 	
 	@Test

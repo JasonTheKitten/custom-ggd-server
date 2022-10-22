@@ -13,6 +13,7 @@ public class MatchMakerSocketState implements SocketState {
 	
 	private final MatchMaker matchMaker;
 	
+	private static final int maxPlayersConnected = Integer.valueOf(System.getProperty("MAX_PLAYERS", "2"));
 	private static int playersConnected = 0;
 
 	public MatchMakerSocketState(MatchMaker matchMaker) {
@@ -39,7 +40,7 @@ public class MatchMakerSocketState implements SocketState {
 		sendMatchURL(sessionData, out);
 		
 		//TODO: Start at proper time
-		if (++playersConnected == 2) {
+		if (++playersConnected == maxPlayersConnected) {
 			matchMaker.fulfillCurrentMatch();
 			playersConnected = 0;
 		}

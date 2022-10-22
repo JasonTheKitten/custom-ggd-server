@@ -4,6 +4,7 @@ import everyos.ggd.server.message.CountdownMessage;
 import everyos.ggd.server.message.EntityMoveMessage;
 import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.MatchFinishedMessage;
+import everyos.ggd.server.message.MatchFinishedMessage.PlayerAward;
 import everyos.ggd.server.message.MatchInitMessage;
 import everyos.ggd.server.message.MatchStateUpdateMessage;
 import everyos.ggd.server.message.Message;
@@ -203,7 +204,14 @@ public class MessageEncoderImp implements MessageEncoder {
 			matchFinishedData.set(7, 1);
 		}
 		
-		//TODO: Awards
+		PlayerAward[] awards = message.getAwards();
+		for (int i = 0; i < awards.length; i++) {
+			PlayerAward award = awards[i];
+			SocketArray awardData = createSocketArray();
+			awardData.set(0, award.getEntityId() + 1);
+			awardData.set(1, award.getAward().ordinal());
+			matchFinishedData.overload(i).set(9, awardData);
+		}
 		
 		SocketArray encoded = createSocketArray();
 		encoded.set(0, Message.MATCH_UPDATE_OR_FINISH);

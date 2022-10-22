@@ -34,5 +34,27 @@ public class MatchFinishedMessageImp implements MatchFinishedMessage {
 	public PlayerAward[] getAwards() {
 		return awards;
 	}
+	
+	public static class PlayerAwardImp implements PlayerAward {
+		
+		private final int entityId;
+		private final Award award;
+
+		public PlayerAwardImp(int entityId, Award award) {
+			this.entityId = entityId;
+			this.award = award;
+		}
+
+		@Override
+		public int getEntityId() {
+			return this.entityId;
+		}
+
+		@Override
+		public Award getAward() {
+			return this.award;
+		}
+		
+	}
 
 }

@@ -6,4 +6,12 @@ public interface PlayerStats {
 
 	void incrementScore(int score);
 	
+	int getStolen();
+	
+	void incrementStolen(int stolen);
+	
+	int getStolenFrom();
+	
+	void incrementStolenFrom(int stolen);
+	
 }
