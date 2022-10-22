@@ -145,6 +145,14 @@ public class PlayerStateImp implements PlayerState {
 			.build();
 		stats.incrementStolenFrom(amount);
 	}
+	
+	@Override
+	public void setConnected(boolean connected) {
+		needsUpdate = update.isConnected() != connected;
+		update = PlayerStateUpdateBuilder.clone(update)
+			.setConnected(connected)
+			.build();
+	}
 
 	@Override
 	public void indicateMatchFinished() {

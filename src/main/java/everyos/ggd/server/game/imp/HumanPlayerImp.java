@@ -12,6 +12,8 @@ public class HumanPlayerImp implements HumanPlayer {
 	private final String authenticationKey;
 	private final List<Message> messageFromServerQueue;
 	private final List<Message> messageFromClientQueue;
+	
+	private boolean connected = true;
 
 	public HumanPlayerImp(int playerId, String authenticationKey) {
 		this.playerId = playerId;
@@ -69,6 +71,16 @@ public class HumanPlayerImp implements HumanPlayer {
 	@Override
 	public void ping() {
 		
+	}
+
+	@Override
+	public void setConnected(boolean connected) {
+		this.connected = connected;
+	}
+
+	@Override
+	public boolean getConnected() {
+		return this.connected;
 	}
 	
 }

@@ -41,6 +41,11 @@ public class MatchSocketState implements SocketState {
 			sendQueuedMessages(out);
 		}
 	}
+	
+	@Override
+	public void onDisconnect() {
+		player.setConnected(false);
+	}
 
 	private void handleAuthenticateEvent(Consumer<Event> out) {
 		sendInitialStatePush(match.getId(), player.getAuthenticationKey(), out);

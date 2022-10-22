@@ -10,4 +10,6 @@ public interface SocketState {
 
 	void ping(Consumer<Event> out);
 	
+	void onDisconnect();
+	
 }

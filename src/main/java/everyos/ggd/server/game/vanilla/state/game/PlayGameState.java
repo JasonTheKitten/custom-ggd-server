@@ -2,6 +2,7 @@ package everyos.ggd.server.game.vanilla.state.game;
 
 import java.util.List;
 
+import everyos.ggd.server.game.HumanPlayer;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.game.play.GameTimer;
@@ -63,8 +64,17 @@ public class PlayGameState implements GameState {
 	}
 
 	private void pingPlayers() {
-		for (Player player: matchContext.getPlayers()) {
+		Player[] players = matchContext.getPlayers();
+		for (int i = 0; i < players.length; i++) {
+			Player player = players[i];
+			checkConnected(player, playerStates[i]);
 			player.ping();
+		}
+	}
+
+	private void checkConnected(Player player, PlayerState playerState) {
+		if (player instanceof HumanPlayer) {
+			playerState.setConnected(((HumanPlayer) player).getConnected());
 		}
 	}
 

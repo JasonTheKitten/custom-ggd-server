@@ -33,6 +33,11 @@ public class MatchMakerSocketState implements SocketState {
 	public void ping(Consumer<Event> out) {
 		
 	}
+	
+	@Override
+	public void onDisconnect() {
+		
+	}
 
 	private void handleAuthenticateEvent(Event event, Consumer<Event> out) {
 		SessionData sessionData = matchMaker.createSession();

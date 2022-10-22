@@ -29,6 +29,8 @@ public interface PlayerState extends Entity {
 	void gain(int amount, SpiritGainReason reason);
 	
 	void loose(int amount);
+
+	void setConnected(boolean connected);
 	
 	void indicateMatchFinished();
 	

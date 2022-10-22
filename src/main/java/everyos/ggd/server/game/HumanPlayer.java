@@ -9,5 +9,9 @@ public interface HumanPlayer extends Player {
 	List<Message> getQueuedMessagesFromServer();
 	
 	void onMessageFromClient(Message message);
+
+	void setConnected(boolean b);
+	
+	boolean getConnected();
 	
 }

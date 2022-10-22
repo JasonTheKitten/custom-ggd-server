@@ -33,6 +33,7 @@ public class Client {
 
 	public void stop() {
 		stateRunnerCancelFunc.run();
+		socketState.onDisconnect();
 	}
 	
 	private void startStateRunner() {
