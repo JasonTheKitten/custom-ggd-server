@@ -30,6 +30,7 @@ public class PlayerStateImp implements PlayerState {
 	private PlayerStateUpdate update;
 
 	private Upgrade upgradeLevel = Upgrade.NONE;
+	private long lastBuddyBonusTime = System.currentTimeMillis() + 3000;
 	
 	public PlayerStateImp(int entityId, boolean isBot, PlayerStateEventListener listener) {
 		this.entityId = entityId;
@@ -96,6 +97,16 @@ public class PlayerStateImp implements PlayerState {
 			.setGlowRadius(glowRadius)
 			.build();
 	}
+	
+	@Override
+	public long getLastBuddyBonusTime() {
+		return this.lastBuddyBonusTime;
+	}
+
+	@Override
+	public void setLastBuddyBonusTime(long time) {
+		this.lastBuddyBonusTime = time;
+	}
 
 	@Override
 	public void gain(int amount, SpiritGainReason reason) {
@@ -105,11 +116,17 @@ public class PlayerStateImp implements PlayerState {
 		switch (reason) {
 		case STEAL_SPIRIT:
 			stats.incrementStolen(amount);
+			// Fall-through
 		case GOAL_RETURN:
 			updateBuilder
 				.setAnimation(Animation.SPIRITS_COLLECTED, amount)
 				.setEmotion(Emotion.HAPPY);
 			break;
+		case BUDDY_BONUS:
+			updateBuilder
+				.setAnimation(Animation.BUDDY_BONUS, amount)
+				.setEmotion(Emotion.HAPPY);
+		break;
 		default:
 			break;
 		}

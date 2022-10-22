@@ -22,6 +22,10 @@ public interface PlayerState extends Entity {
 	
 	void setLight(int glowRadius);
 	
+	long getLastBuddyBonusTime();
+	
+	void setLastBuddyBonusTime(long time);
+	
 	void gain(int amount, SpiritGainReason reason);
 	
 	void loose(int amount);
