@@ -8,8 +8,20 @@ You can run it with the following command:
 ./gradlew run
 ```
 
-This server will run on port 8080, regardless of what port you want it to run on.
-As of the time of writing this README, the match starts when two clients have connected.
+Alternatively, you can build the project:
+
+```
+./gradlew build
+```
+
+And then run it as so:
+
+```
+java -DMAX_PLAYERS=${MAX_PLAYERS} -jar build/libs/GhostGame-all.jar --csstore </path/to/keystore.p12> -csp <keystorepassword> -p 8080
+```
+
+By default, the server will run on 8080 in non-TLS mode and the match will start when two clients have connected.
+This can be changed using command line flags. Use `--help` for more information.
 
 You can access Great Ghoul Duel [here](https://www.google.com/logos/2021/halloween18_reboot/r1/halloween18_reboot.html).
 
