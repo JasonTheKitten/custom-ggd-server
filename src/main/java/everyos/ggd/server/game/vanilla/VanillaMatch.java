@@ -15,7 +15,7 @@ import everyos.ggd.server.message.Message;
 public class VanillaMatch implements Match {
 	
 	private static final String[] AVAILABLE_MAPS = new String[] {
-		"map01"/*, "map02", "map03", "map04"*/
+		"map01", "map02", "map03", "map04"
 	};
 	
 	private final int id;
