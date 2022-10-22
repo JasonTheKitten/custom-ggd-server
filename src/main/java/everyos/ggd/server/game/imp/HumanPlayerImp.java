@@ -10,14 +10,12 @@ public class HumanPlayerImp implements HumanPlayer {
 
 	private final int playerId;
 	private final String authenticationKey;
-	private final boolean isBot;
 	private final List<Message> messageFromServerQueue;
 	private final List<Message> messageFromClientQueue;
 
-	public HumanPlayerImp(int playerId, String authenticationKey, boolean isBot) {
+	public HumanPlayerImp(int playerId, String authenticationKey) {
 		this.playerId = playerId;
 		this.authenticationKey = authenticationKey;
-		this.isBot = isBot;
 		this.messageFromServerQueue = new ArrayList<>(1);
 		this.messageFromClientQueue = new ArrayList<>(1);
 	}
@@ -34,16 +32,11 @@ public class HumanPlayerImp implements HumanPlayer {
 	
 	@Override
 	public boolean isBot() {
-		return isBot;
+		return false;
 	}
 
-	
 	@Override
 	public void onMessageFromServer(Message message) {
-		if (message == null) {
-			// If a null message contaminates the queue, it breaks the entire game
-			throw new NullPointerException();
-		}
 		synchronized (messageFromServerQueue) {
 			messageFromServerQueue.add(message);
 		}
@@ -71,6 +64,11 @@ public class HumanPlayerImp implements HumanPlayer {
 		messageFromClientQueue.clear();
 		
 		return messages;
+	}
+
+	@Override
+	public void ping() {
+		
 	}
 	
 }

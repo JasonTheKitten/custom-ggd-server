@@ -15,5 +15,7 @@ public interface Player {
 	void onMessageFromServer(Message message);
 	
 	List<Message> getQueuedMessagesFromClient();
+	
+	void ping();
 
 }

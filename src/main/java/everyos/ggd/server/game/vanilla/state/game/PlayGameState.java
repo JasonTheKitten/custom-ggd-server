@@ -2,6 +2,7 @@ package everyos.ggd.server.game.vanilla.state.game;
 
 import java.util.List;
 
+import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.game.play.GameTimer;
 import everyos.ggd.server.game.vanilla.state.game.play.MatchStateTracker;
@@ -35,6 +36,7 @@ public class PlayGameState implements GameState {
 			matchContext, playerStates,
 			(playerEntityId, playerPosition) -> handlePlayerPositionUpdate(playerEntityId, playerPosition));
 		this.matchStateTracker = new MatchStateTracker(matchContext, playerStates, timer);
+		
 	}
 	
 	@Override
@@ -52,11 +54,18 @@ public class PlayGameState implements GameState {
 			return;
 		}
 		
+		pingPlayers();
 		physicsTracker.tick();
 		playerMessageProcessor.tick();
 		spiritTracker.tick();
 		matchStateTracker.tick();
 		sendEntityStateUpdates();
+	}
+
+	private void pingPlayers() {
+		for (Player player: matchContext.getPlayers()) {
+			player.ping();
+		}
 	}
 
 	private PlayerStats[] getPlayerStats() {

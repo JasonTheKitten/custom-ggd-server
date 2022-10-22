@@ -5,6 +5,7 @@ import java.util.function.Function;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.imp.HumanPlayerImp;
+import everyos.ggd.server.game.vanilla.state.bot.BotPlayerImp;
 import everyos.ggd.server.session.SessionData;
 import everyos.ggd.server.session.SessionManager;
 
@@ -42,7 +43,11 @@ public class MatchMaker {
 		int playerId = nextPlayerId++;
 		String playerAuthenticationKey = generateRandomAuthenticationKey();
 		
-		return new HumanPlayerImp(playerId, playerAuthenticationKey, isBot);
+		if (isBot) {
+			return new BotPlayerImp(playerId,  playerAuthenticationKey);
+		} else {
+			return new HumanPlayerImp(playerId, playerAuthenticationKey);
+		}
 	}
 	
 	private String generateRandomAuthenticationKey() {

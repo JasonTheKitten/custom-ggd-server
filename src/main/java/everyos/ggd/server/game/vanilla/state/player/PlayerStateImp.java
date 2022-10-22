@@ -20,7 +20,7 @@ public class PlayerStateImp implements PlayerState {
 	
 	private final PlayerStats stats = new PlayerStatsImp();
 	private final List<SpiritState> spiritList = new ArrayList<>();
-	private final PhysicsBody physicsBody = new MessagingPhysicsBody();
+	private final MessagingPhysicsBody physicsBody = new MessagingPhysicsBody();
 	private final int entityId;
 	private final PlayerStateEventListener listener;
 	private final boolean isBot;
@@ -157,16 +157,21 @@ public class PlayerStateImp implements PlayerState {
 
 	@Override
 	public List<Message> getQueuedMessages() {
+		List<Message> queuedMessages = new ArrayList<>();
 		if (needsInit) {
 			needsInit = false;
 			needsUpdate = false;
-			return List.of(createInitMessage(isBot));
+			queuedMessages.add(createInitMessage(isBot));
 		} else if (needsUpdate) {
 			needsUpdate = false;
-			return List.of(createPlayerStateUpdateMessage());
+			queuedMessages.add(createPlayerStateUpdateMessage());
 		}
 		
-		return List.of();
+		if (isBot) {
+			queuedMessages.addAll(physicsBody.getQueuedMessages(entityId));
+		}
+		
+		return queuedMessages;
 	}
 	
 	@Override
