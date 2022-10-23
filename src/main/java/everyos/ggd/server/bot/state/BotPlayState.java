@@ -13,7 +13,9 @@ import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.game.vanilla.util.MathUtil;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.map.Tile;
+import everyos.ggd.server.map.imp.TileImp;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.Position;
@@ -58,14 +60,14 @@ public class BotPlayState implements BotState {
 		if ((pathFinder == null || playerState.getSpiritList().size() < 15) && target != Target.SPIRIT) {
 			target = Target.SPIRIT;
 			this.pathFinder = new AStarPathFinder(
-				map,
 				location -> hasUncollectedSpirit(location),
+				location -> playerCanNotPass(location),
 				nextTargetLocation);
 		} else if (playerState.getSpiritList().size() >= 15 && target != Target.GOAL) {
 			target = Target.GOAL;
 			this.pathFinder = new AStarPathFinder(
-				map,
 				location -> isInsideCenterOfPlayerBase(location),
+				location -> playerCanNotPass(location),
 				nextTargetLocation);
 		}
 	}
@@ -113,7 +115,34 @@ public class BotPlayState implements BotState {
 			tile.greenCanPass() != tile.purpleCanPass() &&
 			tile.greenCanPass() == isGreenTeam;
 	}
+	
+	private boolean playerCanNotPass(Location location) {
+		if (playerState.getUpgradeLevel().ordinal() >= Upgrade.TRANSPARENT_UPGRADE.ordinal()) {
+			return !isInBounds(location) || isDifferentPlayerBase(location);
+		} else {
+			return isWall(location);
+		}
+	}
 
+	private boolean isInBounds(Location location) {
+		int x = location.getX();
+		int y = location.getY();
+		return !(x < 0 || y < 0 || x >= map.getWidth() || y >= map.getHeight());
+	}
+
+	private boolean isWall(Location location) {
+		Tile tile = map.getTile(location);
+		return
+			(isGreenTeam && !tile.greenCanPass()) ||
+			(!isGreenTeam && !tile.purpleCanPass());
+	}
+
+	private boolean isDifferentPlayerBase(Location location) {
+		Tile tile = map.getTile(location);
+		return
+			tile.greenCanPass() != tile.purpleCanPass() &&
+			isGreenTeam != tile.greenCanPass();
+	}
 
 	private void updateLocation() {
 		if (botInRangeOfTarget()) {

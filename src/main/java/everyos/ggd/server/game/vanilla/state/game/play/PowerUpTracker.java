@@ -26,7 +26,7 @@ public class PowerUpTracker {
 			playerState.setUpgradeLevel(Upgrade.MAGNET_UPGRADE);
 		}
 		if (playerState.getUpgradeLevel() == Upgrade.MAGNET_UPGRADE && score >= WALLS_NUM_SOULS) {
-			playerState.setUpgradeLevel(Upgrade.TRANSPARENT);
+			playerState.setUpgradeLevel(Upgrade.TRANSPARENT_UPGRADE);
 		}
 	}
 	
@@ -38,7 +38,7 @@ public class PowerUpTracker {
 		} else if (playerState.getUpgradeLevel() == Upgrade.LIGHT_UPGRADE && scoreWillBe(MAGNET_NUM_SOULS, playerState, amount)) {
 			playerState.setUpgradeHint(Upgrade.MAGNET_UPGRADE);
 		} else if (playerState.getUpgradeLevel() == Upgrade.MAGNET_UPGRADE && scoreWillBe(WALLS_NUM_SOULS, playerState, amount)) {
-			playerState.setUpgradeHint(Upgrade.TRANSPARENT);
+			playerState.setUpgradeHint(Upgrade.TRANSPARENT_UPGRADE);
 		}
 	}
 

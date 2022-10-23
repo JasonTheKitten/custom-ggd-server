@@ -41,7 +41,7 @@ public interface PlayerStateUpdate {
 	}
 	
 	public static enum Upgrade {
-		NONE, SPEED_UPGRADE, LIGHT_UPGRADE, MAGNET_UPGRADE, TRANSPARENT
+		NONE, SPEED_UPGRADE, LIGHT_UPGRADE, MAGNET_UPGRADE, TRANSPARENT_UPGRADE
 	}
 	
 }

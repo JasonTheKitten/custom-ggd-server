@@ -18,11 +18,11 @@ public class AStarPathFinder implements PathFinder {
 	
 	private final Deque<Direction> path;
 
-	public AStarPathFinder(MatchMap map, Function<Location, Boolean> goalChecker, Location initialLocation) {
+	public AStarPathFinder(Function<Location, Boolean> goalChecker, Function<Location, Boolean> wallChecker, Location initialLocation) {
 		if (goalChecker.apply(initialLocation)) {
 			this.path = new ArrayDeque<>();
 		} else {
-			this.path = findBestRoute(map, initialLocation, goalChecker);
+			this.path = findBestRoute(initialLocation, goalChecker, wallChecker);
 		}
 	}
 	
@@ -34,12 +34,20 @@ public class AStarPathFinder implements PathFinder {
 		return path.pop();
 	}
 	
-	private Deque<Direction> findBestRoute(MatchMap map, Location initialLocation, Function<Location, Boolean> goalChecker) {
-		TileEntry endTileEntry = spreadUntilGoalFound(map, initialLocation, goalChecker);
+	private Deque<Direction> findBestRoute(
+		Location initialLocation,
+		Function<Location, Boolean> goalChecker,
+		Function<Location, Boolean> wallChecker
+	) {
+		TileEntry endTileEntry = spreadUntilGoalFound(initialLocation, goalChecker, wallChecker);
 		return getFinalPath(endTileEntry);
 	}
 	
-	private TileEntry spreadUntilGoalFound(MatchMap map, Location initialLocation, Function<Location, Boolean> goalChecker) {
+	private TileEntry spreadUntilGoalFound(
+		Location initialLocation,
+		Function<Location, Boolean> goalChecker,
+		Function<Location, Boolean> wallChecker
+	) {
 		PriorityQueue<TileEntry> triedTiles = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.cost() - o2.cost()));
 		TileEntry initialTile = new TileEntry(null, initialLocation, null, 0);
 		triedTiles.add(initialTile);
@@ -50,7 +58,7 @@ public class AStarPathFinder implements PathFinder {
 			if (triedTiles.isEmpty()) {
 				return initialTile;
 			}
-			TileEntry result = tryNextLocations(map, triedTiles, triedLocations, goalChecker);
+			TileEntry result = tryNextLocations(triedTiles, triedLocations, goalChecker, wallChecker);
 			if (result != null) {
 				return result;
 			}
@@ -58,14 +66,14 @@ public class AStarPathFinder implements PathFinder {
 	}
 
 	private TileEntry tryNextLocations(
-		MatchMap map,
 		PriorityQueue<TileEntry> triedTiles,
 		List<Location> triedLocations,
-		Function<Location, Boolean> goalChecker
+		Function<Location, Boolean> goalChecker,
+		Function<Location, Boolean> wallChecker
 	) {
 		TileEntry entry = triedTiles.poll();
 		for (Direction direction: Direction.DIRECTIONS) {
-			TileEntry tryResult = tryTileLocation(map, entry, direction, triedLocations);
+			TileEntry tryResult = tryTileLocation(entry, direction, triedLocations, wallChecker);
 			if (tryResult == null) {
 				continue;
 			}
@@ -78,13 +86,18 @@ public class AStarPathFinder implements PathFinder {
 		return null;
 	}
 	
-	private TileEntry tryTileLocation(MatchMap map, TileEntry source, Direction direction, List<Location> triedLocations) {
+	private TileEntry tryTileLocation(
+		TileEntry source,
+		Direction direction,
+		List<Location> triedLocations,
+		Function<Location, Boolean> wallChecker
+	) {
 		Location tileLocation = LocationUtil.addDirection(source.location(), direction);
 		if (triedLocations.contains(tileLocation)) {
 			return null;
 		}
 		triedLocations.add(tileLocation);
-		if (!tileIsValid(map, tileLocation)) {
+		if (wallChecker.apply(tileLocation)) {
 			return null;
 		}
 		return new TileEntry(source, tileLocation, direction, source.cost() + 1);
