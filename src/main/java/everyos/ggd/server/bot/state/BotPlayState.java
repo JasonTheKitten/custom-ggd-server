@@ -24,6 +24,8 @@ import everyos.ggd.server.physics.util.LocationUtil;
 import everyos.ggd.server.physics.util.PhysicsUtil;
 
 public class BotPlayState implements BotState {
+	
+	private static final int SPIRIT_TARGET_COOLDOWN_MILLIS = 2500;
 
 	private final MatchMap map;
 	private final List<Entity> entities;
@@ -34,6 +36,8 @@ public class BotPlayState implements BotState {
 	private Target target;
 	private long lastLocationUpdate = 0;
 	private Location nextTargetLocation;
+	private int prevNumSpirits = 0;
+	private long spiritTargetCooldownStart = 0;
 
 	public BotPlayState(MatchData matchData, PlayerState playerState) {
 		this.map = matchData.map();
@@ -56,6 +60,10 @@ public class BotPlayState implements BotState {
 	}
 
 	private void checkTargetChanged() {
+		if (!isInCoolDown() && playerState.getSpiritList().size() < prevNumSpirits) {
+			spiritTargetCooldownStart = System.currentTimeMillis();
+			target = null;
+		}
 		if ((pathFinder == null || playerState.getSpiritList().size() < 15) && target != Target.SPIRIT) {
 			target = Target.SPIRIT;
 			this.pathFinder = new AStarPathFinder(
@@ -69,6 +77,11 @@ public class BotPlayState implements BotState {
 				location -> playerCanNotPass(location),
 				nextTargetLocation);
 		}
+		prevNumSpirits = playerState.getSpiritList().size();
+	}
+
+	private boolean isInCoolDown() {
+		return System.currentTimeMillis() - spiritTargetCooldownStart < SPIRIT_TARGET_COOLDOWN_MILLIS;
 	}
 
 	private boolean hasUncollectedSpirit(Location location) {
@@ -77,11 +90,7 @@ public class BotPlayState implements BotState {
 				continue;
 			}
 			SpiritTeam team = ((SpiritState) entity).getTeam();
-			if (
-				team == SpiritTeam.NO_TEAM ||
-				(isGreenTeam && team == SpiritTeam.PURPLE_TEAM) ||
-				(!isGreenTeam && team == SpiritTeam.GREEN_TEAM)
-			) {
+			if (canTargetSpirit(team)) {
 				Position entityPosition = entity.getPhysicsBody().getCurrentPosition();
 				Location entityLocation = MapUtil.positionToLocation(map, entityPosition);
 				if (entityLocation.equals(location)) {
@@ -93,6 +102,13 @@ public class BotPlayState implements BotState {
 		return false;
 	}
 	
+	private boolean canTargetSpirit(SpiritTeam team) {
+		return
+			team == SpiritTeam.NO_TEAM ||
+			(isGreenTeam && team == SpiritTeam.PURPLE_TEAM && !isInCoolDown()) ||
+			(!isGreenTeam && team == SpiritTeam.GREEN_TEAM && !isInCoolDown());
+	}
+
 	private boolean isInsideCenterOfPlayerBase(Location location) {
 		if (!isPlayerBase(location)) {
 			return false;
