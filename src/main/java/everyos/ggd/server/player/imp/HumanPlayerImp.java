@@ -1,10 +1,10 @@
-package everyos.ggd.server.game.imp;
+package everyos.ggd.server.player.imp;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import everyos.ggd.server.game.HumanPlayer;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.player.HumanPlayer;
 
 public class HumanPlayerImp implements HumanPlayer {
 

@@ -18,6 +18,8 @@ public interface PlayerState extends Entity {
 	
 	void setUpgradeHint(Upgrade speedUpgrade);
 	
+	float getSpeed();
+	
 	void setSpeed(float speed);
 	
 	void setLight(int glowRadius);

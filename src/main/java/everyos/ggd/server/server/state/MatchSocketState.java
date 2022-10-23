@@ -8,9 +8,9 @@ import everyos.ggd.server.event.Event;
 import everyos.ggd.server.event.MessageEvent;
 import everyos.ggd.server.event.imp.InitialStatePushEventImp;
 import everyos.ggd.server.event.imp.MessageEventImp;
-import everyos.ggd.server.game.HumanPlayer;
 import everyos.ggd.server.game.Match;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.player.HumanPlayer;
 
 public class MatchSocketState implements SocketState {
 

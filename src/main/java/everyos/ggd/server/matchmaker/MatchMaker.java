@@ -2,10 +2,10 @@ package everyos.ggd.server.matchmaker;
 
 import java.util.function.Function;
 
+import everyos.ggd.server.bot.BotPlayerImp;
 import everyos.ggd.server.game.Match;
-import everyos.ggd.server.game.Player;
-import everyos.ggd.server.game.imp.HumanPlayerImp;
-import everyos.ggd.server.game.vanilla.state.bot.BotPlayerImp;
+import everyos.ggd.server.player.Player;
+import everyos.ggd.server.player.imp.HumanPlayerImp;
 import everyos.ggd.server.session.SessionData;
 import everyos.ggd.server.session.SessionManager;
 

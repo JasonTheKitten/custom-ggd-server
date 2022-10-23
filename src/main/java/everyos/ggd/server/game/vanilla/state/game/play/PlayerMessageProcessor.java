@@ -5,7 +5,6 @@ import java.util.function.BiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.player.PlayerState;
 import everyos.ggd.server.message.EntityMoveMessage;
@@ -13,6 +12,7 @@ import everyos.ggd.server.message.EntityTeleportMessage;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.player.Player;
 
 public class PlayerMessageProcessor {
 	

@@ -13,7 +13,7 @@ public class MatchMakerSocketState implements SocketState {
 	
 	private final MatchMaker matchMaker;
 	
-	private static final int maxPlayersConnected = Integer.valueOf(System.getProperty("MAX_PLAYERS", "2"));
+	private static final int maxPlayersConnected = Integer.valueOf(System.getProperty("MAX_PLAYERS", "1"));
 	private static int playersConnected = 0;
 
 	public MatchMakerSocketState(MatchMaker matchMaker) {

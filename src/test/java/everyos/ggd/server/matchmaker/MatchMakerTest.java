@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import everyos.ggd.server.common.imp.TickTimerImp;
 import everyos.ggd.server.game.Match;
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.VanillaMatch;
+import everyos.ggd.server.player.Player;
 import everyos.ggd.server.session.SessionData;
 import everyos.ggd.server.session.SessionManager;
 

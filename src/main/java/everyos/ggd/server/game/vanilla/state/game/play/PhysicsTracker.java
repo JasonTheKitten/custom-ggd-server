@@ -11,10 +11,14 @@ public class PhysicsTracker {
 
 	private final MatchContext matchContext;
 	
-	private long lastPoll = System.currentTimeMillis();
+	private long lastPoll;
 
 	public PhysicsTracker(MatchContext matchContext) {
 		this.matchContext = matchContext;
+	}
+	
+	public void start() {
+		lastPoll = System.currentTimeMillis();
 	}
 	
 	public void tick() {

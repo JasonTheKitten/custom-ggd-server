@@ -2,11 +2,11 @@ package everyos.ggd.server.game.vanilla;
 
 import java.util.List;
 
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.entity.EntityRegister;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.player.Player;
 
 public interface MatchContext {
 

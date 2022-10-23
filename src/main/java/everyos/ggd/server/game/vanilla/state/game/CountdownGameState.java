@@ -1,8 +1,8 @@
 package everyos.ggd.server.game.vanilla.state.game;
 
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.message.imp.CountdownMessageImp;
+import everyos.ggd.server.player.Player;
 
 public class CountdownGameState implements GameState {
 	

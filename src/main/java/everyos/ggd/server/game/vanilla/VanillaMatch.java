@@ -4,7 +4,6 @@ import java.util.List;
 
 import everyos.ggd.server.common.TickTimer;
 import everyos.ggd.server.game.Match;
-import everyos.ggd.server.game.Player;
 import everyos.ggd.server.game.vanilla.state.entity.EntityRegister;
 import everyos.ggd.server.game.vanilla.state.entity.EntityRegisterImp;
 import everyos.ggd.server.game.vanilla.state.game.GameState;
@@ -13,6 +12,7 @@ import everyos.ggd.server.game.vanilla.state.game.MatchSetupGameState;
 import everyos.ggd.server.map.MapLoader;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.message.Message;
+import everyos.ggd.server.player.Player;
 
 public class VanillaMatch implements Match {
 	

@@ -1,5 +1,7 @@
 package everyos.ggd.server.physics.imp;
 
+import java.util.Objects;
+
 import everyos.ggd.server.physics.Location;
 
 public class LocationImp implements Location {
@@ -22,6 +24,17 @@ public class LocationImp implements Location {
 		return this.y;
 	}
 	
-	//TODO: Implement equals and hashCode
+	@Override
+	public boolean equals(Object o) {
+		return
+			o instanceof Location &&
+			this.x == ((Location) o).getX() &&
+			this.y == ((Location) o).getY();
+	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y);
+	}
+	
 }

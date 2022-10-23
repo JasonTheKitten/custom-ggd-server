@@ -83,6 +83,11 @@ public class PlayerStateImp implements PlayerState {
 	}
 	
 	@Override
+	public float getSpeed() {
+		return update.getSpeed();
+	}
+	
+	@Override
 	public void setSpeed(float speed) {
 		needsUpdate = true;
 		update = PlayerStateUpdateBuilder.clone(update)

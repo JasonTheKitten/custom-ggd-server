@@ -1,5 +1,7 @@
 package everyos.ggd.server.game;
 
+import everyos.ggd.server.player.Player;
+
 public interface Match {
 	
 	int getId();

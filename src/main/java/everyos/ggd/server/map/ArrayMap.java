@@ -1,6 +1,7 @@
 package everyos.ggd.server.map;
 
 import everyos.ggd.server.map.imp.TileImp;
+import everyos.ggd.server.physics.Location;
 
 public class ArrayMap implements MatchMap {
 
@@ -33,6 +34,11 @@ public class ArrayMap implements MatchMap {
 			tile == 4,
 			tile == 5
 		);
+	}
+	
+	@Override
+	public Tile getTile(Location location) {
+		return getTile(location.getX(), location.getY());
 	}
 	
 }

@@ -9,7 +9,7 @@ import everyos.ggd.server.physics.PhysicsBody;
 import everyos.ggd.server.physics.Position;
 import everyos.ggd.server.physics.Velocity;
 import everyos.ggd.server.physics.imp.PositionImp;
-import everyos.ggd.server.physics.imp.VelocityImp;
+import everyos.ggd.server.physics.util.PhysicsUtil;
 
 public class SpiritTrailTracker {
 	
@@ -55,13 +55,7 @@ public class SpiritTrailTracker {
 		float totalVelocity = (float) Math.sqrt(
 			playerVelocity.getX() * playerVelocity.getX() +
 			playerVelocity.getY() * playerVelocity.getY());
-		float xDistance = nextSpiritPosition.getX() - currentPosition.getX();
-		float yDistance = nextSpiritPosition.getY() - currentPosition.getY();
-		float angle = (float) Math.atan(yDistance/xDistance);
-		float xComponent = (float) Math.cos(angle) * totalVelocity;
-		float yComponent = (float) Math.sin(angle) * totalVelocity;
-		
-		return new VelocityImp(xComponent, yComponent);
+		return PhysicsUtil.calculateVelocityAngle(currentPosition, nextSpiritPosition, totalVelocity);
 	}
 	
 }

@@ -1,4 +1,4 @@
-package everyos.ggd.server.game;
+package everyos.ggd.server.player;
 
 import java.util.List;
 
