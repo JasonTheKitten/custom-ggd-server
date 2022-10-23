@@ -9,8 +9,6 @@ import java.util.function.Function;
 
 import everyos.ggd.server.bot.Direction;
 import everyos.ggd.server.bot.PathFinder;
-import everyos.ggd.server.map.MatchMap;
-import everyos.ggd.server.map.Tile;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.util.LocationUtil;
 
@@ -101,11 +99,6 @@ public class AStarPathFinder implements PathFinder {
 			return null;
 		}
 		return new TileEntry(source, tileLocation, direction, source.cost() + 1);
-	}
-
-	private boolean tileIsValid(MatchMap map, Location location) {
-		Tile tile = map.getTile(location);
-		return tile.purpleCanPass() || tile.greenCanPass(); //TODO
 	}
 	
 	private Deque<Direction> getFinalPath(TileEntry endTileEntry) {

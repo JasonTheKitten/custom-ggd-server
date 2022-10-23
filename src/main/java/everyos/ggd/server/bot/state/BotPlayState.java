@@ -13,7 +13,6 @@ import everyos.ggd.server.game.vanilla.util.MapUtil;
 import everyos.ggd.server.game.vanilla.util.MathUtil;
 import everyos.ggd.server.map.MatchMap;
 import everyos.ggd.server.map.Tile;
-import everyos.ggd.server.map.imp.TileImp;
 import everyos.ggd.server.message.Message;
 import everyos.ggd.server.message.PlayerStateUpdate.Upgrade;
 import everyos.ggd.server.message.SpiritStateUpdate.SpiritTeam;

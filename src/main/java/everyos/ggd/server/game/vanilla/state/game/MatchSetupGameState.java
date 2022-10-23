@@ -16,6 +16,7 @@ import everyos.ggd.server.message.imp.MatchInitMessageImp;
 import everyos.ggd.server.message.imp.SessionDataSetMessageImp;
 import everyos.ggd.server.physics.Location;
 import everyos.ggd.server.physics.Position;
+import everyos.ggd.server.physics.imp.PositionImp;
 import everyos.ggd.server.player.Player;
 
 public class MatchSetupGameState implements GameState {
@@ -109,7 +110,7 @@ public class MatchSetupGameState implements GameState {
 		List<SpiritState> states = new ArrayList<>();
 		MatchMap map = matchContext.getMap();
 		for (Location spiritLocation: MapUtil.getSpiritFlameTileLocations(map)) {
-			Position spiritPosition = MapUtil.locationToPosition(map, spiritLocation);
+			Position spiritPosition = getSpiritPosition(map, spiritLocation);
 			SpiritState state = createMapSpiritState(spiritPosition);
 			states.add(state);
 			matchContext.broadcastMessages(state.getQueuedMessages());
@@ -118,6 +119,11 @@ public class MatchSetupGameState implements GameState {
 		return states;
 	}
 	
+	private Position getSpiritPosition(MatchMap map, Location spiritLocation) {
+		Position raw = MapUtil.locationToPosition(map, spiritLocation);
+		return new PositionImp(raw.getX() + 1, raw.getY() + 1);
+	}
+
 	private SpiritState createMapSpiritState(Position spiritPosition) {
 		return matchContext
 			.getEntityRegister()
