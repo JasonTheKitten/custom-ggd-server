@@ -29,6 +29,7 @@ public class EventDecoderImp implements EventDecoder {
 			return decodePingEvent(array);
 		case Event.PONG:
 			return decodePongEvent(array);
+		case Event.INITIAL_STATE_PUSH:
 		case Event.AUTHENTICATE:
 			return decodeAuthenticateEvent(array);
 		case Event.MESSAGE:

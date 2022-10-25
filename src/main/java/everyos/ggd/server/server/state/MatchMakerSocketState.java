@@ -11,10 +11,12 @@ import everyos.ggd.server.session.SessionData;
 
 public class MatchMakerSocketState implements SocketState {
 	
-	private final MatchMaker matchMaker;
-	
 	private static final int maxPlayersConnected = Integer.valueOf(System.getProperty("MAX_PLAYERS", "1"));
 	private static int playersConnected = 0;
+	
+	private final MatchMaker matchMaker;
+	
+	private boolean hasSentInitialStatePush = false;
 
 	public MatchMakerSocketState(MatchMaker matchMaker) {
 		this.matchMaker = matchMaker;
@@ -23,7 +25,7 @@ public class MatchMakerSocketState implements SocketState {
 	@Override
 	public void handleEvent(Event event, Consumer<Event> out) {
 		switch (event.code()) {
-		case Event.AUTHENTICATE:
+		case Event.PING:
 			handleAuthenticateEvent(event, out);
 			break;
 		}
@@ -40,6 +42,11 @@ public class MatchMakerSocketState implements SocketState {
 	}
 
 	private void handleAuthenticateEvent(Event event, Consumer<Event> out) {
+		if (hasSentInitialStatePush) {
+			return;
+		}
+		hasSentInitialStatePush = true;
+		
 		SessionData sessionData = matchMaker.createSession();
 		sendInitialStatePush(sessionData, out);
 		sendMatchURL(sessionData, out);

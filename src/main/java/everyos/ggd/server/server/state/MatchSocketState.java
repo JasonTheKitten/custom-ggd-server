@@ -26,6 +26,7 @@ public class MatchSocketState implements SocketState {
 	@Override
 	public void handleEvent(Event event, Consumer<Event> out) {
 		switch (event.code()) {
+		case Event.INITIAL_STATE_PUSH:
 		case Event.AUTHENTICATE:
 			handleAuthenticateEvent(out);
 			break;
