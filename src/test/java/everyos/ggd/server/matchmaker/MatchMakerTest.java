@@ -21,7 +21,8 @@ public class MatchMakerTest {
 	private void beforeEach() {
 		sessionManager = new SessionManager();
 		//TODO: Mock the match
-		matchMaker = new MatchMaker(sessionManager, id -> new VanillaMatch(id, new TickTimerImp(60)));
+		matchMaker = new MatchMaker(sessionManager,
+			id -> new VanillaMatch(id, new TickTimerImp(60), () -> sessionManager.unregisterMatch(id)));
 	}
 
 	@Test

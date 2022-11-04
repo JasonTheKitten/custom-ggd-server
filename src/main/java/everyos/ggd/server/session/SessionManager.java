@@ -17,4 +17,8 @@ public class SessionManager {
 		return matches.get(matchId);
 	}
 
+	public void unregisterMatch(int matchId) {
+		matches.remove(matchId);
+	}
+
 }

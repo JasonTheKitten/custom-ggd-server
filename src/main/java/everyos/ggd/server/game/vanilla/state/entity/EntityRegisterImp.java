@@ -1,6 +1,7 @@
 package everyos.ggd.server.game.vanilla.state.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -8,8 +9,8 @@ import everyos.ggd.server.message.Message;
 
 public class EntityRegisterImp implements EntityRegister {
 	
-	private final List<Entity> entities = new ArrayList<>();
-	private final List<Message> queuedMessages = new ArrayList<>();
+	private final List<Entity> entities = Collections.synchronizedList(new ArrayList<>());
+	private final List<Message> queuedMessages = Collections.synchronizedList(new ArrayList<>());
 	
 	private int nextEntityId = 0;
 

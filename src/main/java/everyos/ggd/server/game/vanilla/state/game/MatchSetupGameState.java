@@ -2,6 +2,8 @@ package everyos.ggd.server.game.vanilla.state.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import everyos.ggd.server.game.vanilla.MatchContext;
 import everyos.ggd.server.game.vanilla.state.game.play.PlayerStateEventListenerImp;
@@ -22,6 +24,8 @@ import everyos.ggd.server.player.Player;
 public class MatchSetupGameState implements GameState {
 	
 	private final MatchContext matchContext;
+	
+	private boolean started = false;
 
 	public MatchSetupGameState(MatchContext matchContext) {
 		this.matchContext = matchContext;
@@ -35,8 +39,17 @@ public class MatchSetupGameState implements GameState {
 	@Override
 	public void ping() {
 		Player[] players = matchContext.getPlayers();
-		if (players[players.length - 1] != null) {
-			setupMatch();
+		if (players[players.length - 1] != null && !started) {
+			started = true;
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					setupMatch();
+				}
+				
+			}, 2000);
 		}
 	}
 

@@ -51,7 +51,8 @@ public class GGDServer extends WebSocketServer {
 	private final Map<WebSocket, Client> clients = new HashMap<>();
 	private final TickTimer tickTimer = new TickTimerImp(FRAME_RATE);
 	private final SessionManager sessionManager = new SessionManager();
-	private final MatchMaker matchMaker = new MatchMaker(sessionManager, id -> new VanillaMatch(id, tickTimer));
+	private final MatchMaker matchMaker = new MatchMaker(sessionManager,
+		id -> new VanillaMatch(id, tickTimer, () -> sessionManager.unregisterMatch(id)));
 	
 	private final SocketDecoder decoder = new SocketDecoderImp();
 	private final SocketEncoder encoder = new SocketEncoderImp();
@@ -78,7 +79,7 @@ public class GGDServer extends WebSocketServer {
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		String reasonMsg = reason.isEmpty() ? "" : "#" + reason;
 		logger.info("Client disconnnected! (Address: " + conn.getRemoteSocketAddress() + ", reason: " + code + reasonMsg + ")");
-		clients.get(conn).stop();
+		clients.remove(conn).stop();
 	}
 	
 	@Override

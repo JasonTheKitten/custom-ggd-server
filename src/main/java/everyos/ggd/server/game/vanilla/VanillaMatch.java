@@ -27,13 +27,15 @@ public class VanillaMatch implements Match {
 	private final MatchMap map = MapLoader.loadFromResourceByName(mapName);
 	private final EntityRegister entityRegister = new EntityRegisterImp();
 	private final TickTimer tickTimer;
+	private final Runnable finishHook;
 	
 	private GameState gameState = new MatchSetupGameState(matchContext);
 	private Runnable tickCancelFunc;
 
-	public VanillaMatch(int id, TickTimer tickTimer) {
+	public VanillaMatch(int id, TickTimer tickTimer, Runnable finishHook) {
 		this.id = id;
 		this.tickTimer = tickTimer;
+		this.finishHook = finishHook;
 	}
 
 	@Override
@@ -94,6 +96,10 @@ public class VanillaMatch implements Match {
 		gameState.ping();
 	}
 	
+	private void onFinishHook() {
+		finishHook.run();
+	}
+	
 	private class MatchContextImp implements MatchContext {
 
 		@Override
@@ -107,9 +113,10 @@ public class VanillaMatch implements Match {
 			gameState.start();
 			if (gameState instanceof MatchFinishedGameState) {
 				tickCancelFunc.run();
+				onFinishHook();
 			}
 		}
-		
+
 		@Override
 		public MatchMap getMap() {
 			return map;

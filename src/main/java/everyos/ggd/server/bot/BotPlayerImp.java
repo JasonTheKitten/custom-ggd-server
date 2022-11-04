@@ -46,13 +46,17 @@ public class BotPlayerImp implements BotPlayer {
 
 	@Override
 	public List<Message> getQueuedMessagesFromClient() {
-		return outgoingMessages;
+		List<Message> messages = List.copyOf(outgoingMessages);
+		outgoingMessages.clear();
+		return messages;
 	}
 
 	@Override
 	public void ping() {
 		if (state != null) {
-			state.ping(incomingMessages);
+			List<Message> messages = List.copyOf(incomingMessages);
+			incomingMessages.clear();
+			state.ping(messages);
 		}
 	}
 
